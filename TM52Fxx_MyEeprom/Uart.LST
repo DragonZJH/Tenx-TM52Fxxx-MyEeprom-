@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   UART                                                              07/09/2021 14:29:49 PAGE 1   
+C51 COMPILER V9.56.0.0   UART                                                              07/09/2021 14:58:19 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE UART
@@ -62,7 +62,7 @@ line level    source
   51   1        unsigned char i;
   52   1      
   53   1        for ( i=0; i<t; i++ )
-C51 COMPILER V9.56.0.0   UART                                                              07/09/2021 14:29:49 PAGE 2   
+C51 COMPILER V9.56.0.0   UART                                                              07/09/2021 14:58:19 PAGE 2   
 
   54   1        {
   55   2          Uart_Send_Byte ( array[i] );
@@ -126,7 +126,7 @@ line level    source
                   // AddArrayList ( &ArrayList_SendData,UartReadData );
                 }
               
-C51 COMPILER V9.56.0.0   UART                                                              07/09/2021 14:29:49 PAGE 3   
+C51 COMPILER V9.56.0.0   UART                                                              07/09/2021 14:58:19 PAGE 3   
 
               }
               #endif

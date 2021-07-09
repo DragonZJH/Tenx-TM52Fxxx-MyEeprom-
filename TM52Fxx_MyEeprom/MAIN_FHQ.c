@@ -89,8 +89,11 @@ void SystemInit()
 	UartInit();
 	Timer0_Init();
 
-    MyEeprom.EepromTestWriteCount=0;
+	#if TestEeprom==TRUE
+  MyEeprom.EepromTestWriteCount=0;
+		#endif
 	ReadSameDataFromEeprom();
+
 	
 	WDTPSC0;//WDT 480MS
 	WDT_RUN_FAST_DIS_ILDE;

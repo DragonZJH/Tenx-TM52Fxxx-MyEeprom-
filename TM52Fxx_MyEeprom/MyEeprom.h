@@ -67,7 +67,7 @@
 #define TM52FE8276_TotalEeprom  128  //这个芯片总共可以使用的EEPROM字节，TM52f82xx芯片偶地址有效
 
 //用户初期调试测试查看数据用   //测试Eeprom时置TRUE --- 后期设为FALSE即可
-#define TestEeprom  TRUE           
+#define TestEeprom  FALSE           
 
 
 //用户需要设置保存数据的地址

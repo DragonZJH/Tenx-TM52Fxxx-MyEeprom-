@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   MYEEPROM                                                          07/09/2021 14:29:49 PAGE 1   
+C51 COMPILER V9.56.0.0   MYEEPROM                                                          07/09/2021 14:58:19 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MYEEPROM
@@ -62,7 +62,7 @@ line level    source
   52           Return Value :
   53           Calls        :
   54           Called By    :
-C51 COMPILER V9.56.0.0   MYEEPROM                                                          07/09/2021 14:29:49 PAGE 2   
+C51 COMPILER V9.56.0.0   MYEEPROM                                                          07/09/2021 14:58:19 PAGE 2   
 
   55          
   56            History        :
@@ -110,134 +110,134 @@ line level    source
   98          
   99          
  100          #if TestEeprom==TRUE
- 101          /*****************************************************************************
- 102           Prototype    : MyEepromTestHandle
- 103           Description  : 供测试调用，用户可以自定义修改，
- 104           Input        : char* from 用户自定义指针 如数码管显示缓冲区，串口打印数据数组等
- 105                          unsigned int  dat
- 106                          unsigned char flag  用户自定义操作命令
- 107           Output       : None
- 108           Return Value :
- 109           Calls        :
- 110           Called By    :
- 111          
- 112            History        :
- 113            1.Date         : 2021/7/6
- 114              Author       : Dragon8814
- 115              Modification : Created function
- 116          
-C51 COMPILER V9.56.0.0   MYEEPROM                                                          07/09/2021 14:29:49 PAGE 3   
+              /*****************************************************************************
+               Prototype    : MyEepromTestHandle
+               Description  : 供测试调用，用户可以自定义修改，
+               Input        : char* from 用户自定义指针 如数码管显示缓冲区，串口打印数据数组等
+                              unsigned int  dat
+                              unsigned char flag  用户自定义操作命令
+               Output       : None
+               Return Value :
+               Calls        :
+               Called By    :
+              
+                History        :
+                1.Date         : 2021/7/6
+                  Author       : Dragon8814
+                  Modification : Created function
+              
+C51 COMPILER V9.56.0.0   MYEEPROM                                                          07/09/2021 14:58:19 PAGE 3   
 
- 117          *****************************************************************************/
- 118          void MyEepromTestHandle ( char* from,unsigned char flag )
- 119          {
- 120   1        unsigned char idata t;
- 121   1        unsigned char idata area=0;
- 122   1        switch ( flag )
- 123   1        {
- 124   2      
- 125   2          case 'A':
- 126   2      #if TestEeprom==TRUE
- 127   2            //启动时读取每个区域写入次数的
- 128   2            for ( t=0; t<EepromMaxArea; t++ )
- 129   2            {
- 130   3              RWEepromStart();
- 131   3              MyEeprom.EepromTestArea[t]= * ( MyEeprom.EepromOnRamAddress+ ( EepromStrogeValue*2*t ) );
- 132   3              RWEepromEnd();
- 133   3            }
- 134   2            for ( t=0; t<EepromMaxArea; t++ )
- 135   2            {
- 136   3              if ( MyEeprom.EepromTestArea[t]<EepromMaxAreaCount )
- 137   3              {
- 138   4                area=t;
- 139   4                break;
- 140   4              }
- 141   3      
- 142   3      
- 143   3            }
- 144   2            RWEepromStart();
- 145   2            MyEeprom.EepromTestWriteCount = ( unsigned long ) ( * ( MyEeprom.EepromOnRamAddress+ ( EepromStrogeValu
+              *****************************************************************************/
+              void MyEepromTestHandle ( char* from,unsigned char flag )
+              {
+                unsigned char idata t;
+                unsigned char idata area=0;
+                switch ( flag )
+                {
+              
+                  case 'A':
+              #if TestEeprom==TRUE
+                    //启动时读取每个区域写入次数的
+                    for ( t=0; t<EepromMaxArea; t++ )
+                    {
+                      RWEepromStart();
+                      MyEeprom.EepromTestArea[t]= * ( MyEeprom.EepromOnRamAddress+ ( EepromStrogeValue*2*t ) );
+                      RWEepromEnd();
+                    }
+                    for ( t=0; t<EepromMaxArea; t++ )
+                    {
+                      if ( MyEeprom.EepromTestArea[t]<EepromMaxAreaCount )
+                      {
+                        area=t;
+                        break;
+                      }
+              
+              
+                    }
+                    RWEepromStart();
+                    MyEeprom.EepromTestWriteCount = ( unsigned long ) ( * ( MyEeprom.EepromOnRamAddress+ ( EepromStrogeValu
              -e*2* area )+CS_CountAddr_L *2  ) ) ;
- 146   2            MyEeprom.EepromTestWriteCount|= ( ( ( unsigned long )  ( * ( MyEeprom.EepromOnRamAddress+ ( EepromStrog
+                    MyEeprom.EepromTestWriteCount|= ( ( ( unsigned long )  ( * ( MyEeprom.EepromOnRamAddress+ ( EepromStrog
              -eValue*2* area )+ CS_CountAddr_H *2      ) ) ) <<8 );
- 147   2            MyEeprom.EepromTestWriteCount|= ( ( ( unsigned long )  ( * ( MyEeprom.EepromOnRamAddress+ ( EepromStrog
+                    MyEeprom.EepromTestWriteCount|= ( ( ( unsigned long )  ( * ( MyEeprom.EepromOnRamAddress+ ( EepromStrog
              -eValue*2* area )+ SetStableDukAddr_L *2  ) ) ) <<16 );
- 148   2            MyEeprom.EepromTestWriteCount|= ( ( ( unsigned long )  ( * ( MyEeprom.EepromOnRamAddress+ ( EepromStrog
+                    MyEeprom.EepromTestWriteCount|= ( ( ( unsigned long )  ( * ( MyEeprom.EepromOnRamAddress+ ( EepromStrog
              -eValue*2* area )+ SetStableDukAddr_H *2  ) ) ) <<24 );
- 149   2            RWEepromEnd();
- 150   2      #endif
- 151   2      
- 152   2      
- 153   2      
- 154   2      //      MyEeprom.EepromTestWriteCount = ( unsigned long ) EepromRead( CS_CountAddr_L  ) ;
- 155   2      //      MyEeprom.EepromTestWriteCount|= ( ( ( unsigned long )  EepromRead ( CS_CountAddr_H) ) <<8 );
- 156   2      //      MyEeprom.EepromTestWriteCount|= ( ( ( unsigned long )  EepromRead( SetStableDukAddr_L ) )  <<16 );
- 157   2      //      MyEeprom.EepromTestWriteCount|= ( ( ( unsigned long )  EepromRead(  SetStableDukAddr_H  ) ) <<24 );
- 158   2      //
- 159   2      
- 160   2            break;
- 161   2          case 'B':
- 162   2            //外部给定的变量地址 数据大小即为写入的速度
- 163   2            //用测试EEprom擦写极限或擦写寿命
- 164   2            if ( * ( ( unsigned int* ) from ) >=40 ) //=500为5秒写一次 ，10=100ms 40=400ms
- 165   2            {
- 166   3              * ( ( unsigned int* ) from ) =0;
- 167   3              //更新所有数据
- 168   3              MyEepromWrite ( FALSE,FALSE,TRUE );
- 169   3      
- 170   3            }
- 171   2      
- 172   2            break;
- 173   2          case 'C':
- 174   2      #if TestEeprom==TRUE
-C51 COMPILER V9.56.0.0   MYEEPROM                                                          07/09/2021 14:29:49 PAGE 4   
+                    RWEepromEnd();
+              #endif
+              
+              
+              
+              //      MyEeprom.EepromTestWriteCount = ( unsigned long ) EepromRead( CS_CountAddr_L  ) ;
+              //      MyEeprom.EepromTestWriteCount|= ( ( ( unsigned long )  EepromRead ( CS_CountAddr_H) ) <<8 );
+              //      MyEeprom.EepromTestWriteCount|= ( ( ( unsigned long )  EepromRead( SetStableDukAddr_L ) )  <<16 );
+              //      MyEeprom.EepromTestWriteCount|= ( ( ( unsigned long )  EepromRead(  SetStableDukAddr_H  ) ) <<24 );
+              //
+              
+                    break;
+                  case 'B':
+                    //外部给定的变量地址 数据大小即为写入的速度
+                    //用测试EEprom擦写极限或擦写寿命
+                    if ( * ( ( unsigned int* ) from ) >=40 ) //=500为5秒写一次 ，10=100ms 40=400ms
+                    {
+                      * ( ( unsigned int* ) from ) =0;
+                      //更新所有数据
+                      MyEepromWrite ( FALSE,FALSE,TRUE );
+              
+                    }
+              
+                    break;
+                  case 'C':
+              #if TestEeprom==TRUE
+C51 COMPILER V9.56.0.0   MYEEPROM                                                          07/09/2021 14:58:19 PAGE 4   
 
- 175   2            //LED显示缓冲区写入特定数据
- 176   2            //显示当前写入的区域 并显示每个区域当前写入的次数
- 177   2            from[LED_SetTemp_COM1]=Number[MyEeprom.EepromTestArea[0]/100]; //0
- 178   2            from[LED_SetTemp_COM2]=Number[MyEeprom.EepromTestArea[0]%100/10]&SEG_DPOFF;
- 179   2            from[LED_SetTemp_COM3]=Number[MyEeprom.EepromTestArea[0]%10];
- 180   2      
- 181   2            from[LED_RealTemp_COM1]=ALL_SEG_OFF;
- 182   2            from[LED_RealTemp_COM2]=Number[MyEeprom.EepromTestArea[1]/100]&SEG_DPOFF; //1
- 183   2            from[LED_RealTemp_COM3]=Number[MyEeprom.EepromTestArea[1]%100/10];
- 184   2            from[LED_RealTemp_COM4]=Number[MyEeprom.EepromTestArea[1]%10];
- 185   2      
- 186   2      
- 187   2            from[LED_SetHumidity_COM1]=ALL_SEG_OFF;
- 188   2            from[LED_SetHumidity_COM2]=Number[MyEeprom.EepromTestArea[2]/100];
- 189   2            from[LED_RealHumidity_COM1]=Number[MyEeprom.EepromTestArea[2]%100/10];
- 190   2            from[LED_RealHumidity_COM2]=Number[MyEeprom.EepromTestArea[2]%10];
- 191   2      
- 192   2            from[LED_FDTimeLeft_COM1]=Number[MyEeprom.EepromTestArea[3]/100]; //3
- 193   2            from[LED_FDTimeLeft_COM2]=Number[MyEeprom.EepromTestArea[3]%100/10];
- 194   2            from[LED_FDTimeLeft_COM3]=Number[MyEeprom.EepromTestArea[3]%10];
- 195   2      #endif
- 196   2            break;
- 197   2          case 'D':
- 198   2      #if TestEeprom==TRUE
- 199   2            //显示总共写入了多少次
- 200   2            from[LED_RealTemp_COM1]=Number[MyEeprom.EepromTestWriteCount/1000000];
- 201   2            from[LED_RealTemp_COM2]=Number[MyEeprom.EepromTestWriteCount%1000000/100000]&SEG_DPOFF; //1
- 202   2            from[LED_RealTemp_COM3]=Number[MyEeprom.EepromTestWriteCount%100000/10000];
- 203   2            from[LED_RealTemp_COM4]=Number[MyEeprom.EepromTestWriteCount%10000/1000];
- 204   2      
- 205   2      
- 206   2            from[LED_RealHumidity_COM1]=Number[MyEeprom.EepromTestWriteCount%1000/100];
- 207   2            from[LED_RealHumidity_COM2]=Number[MyEeprom.EepromTestWriteCount%100/10];
- 208   2      
- 209   2            from[LED_FDTimeLeft_COM1]=Number[MyEeprom.EepromTestWriteCount%10];
- 210   2            from[LED_FDTimeLeft_COM2]=ALL_SEG_OFF;
- 211   2            from[LED_FDTimeLeft_COM3]=ALL_SEG_OFF;
- 212   2      #endif
- 213   2            break;
- 214   2      
- 215   2          default:
- 216   2            break;
- 217   2        }
- 218   1      }
- 219          
- 220          #endif
+                    //LED显示缓冲区写入特定数据
+                    //显示当前写入的区域 并显示每个区域当前写入的次数
+                    from[LED_SetTemp_COM1]=Number[MyEeprom.EepromTestArea[0]/100]; //0
+                    from[LED_SetTemp_COM2]=Number[MyEeprom.EepromTestArea[0]%100/10]&SEG_DPOFF;
+                    from[LED_SetTemp_COM3]=Number[MyEeprom.EepromTestArea[0]%10];
+              
+                    from[LED_RealTemp_COM1]=ALL_SEG_OFF;
+                    from[LED_RealTemp_COM2]=Number[MyEeprom.EepromTestArea[1]/100]&SEG_DPOFF; //1
+                    from[LED_RealTemp_COM3]=Number[MyEeprom.EepromTestArea[1]%100/10];
+                    from[LED_RealTemp_COM4]=Number[MyEeprom.EepromTestArea[1]%10];
+              
+              
+                    from[LED_SetHumidity_COM1]=ALL_SEG_OFF;
+                    from[LED_SetHumidity_COM2]=Number[MyEeprom.EepromTestArea[2]/100];
+                    from[LED_RealHumidity_COM1]=Number[MyEeprom.EepromTestArea[2]%100/10];
+                    from[LED_RealHumidity_COM2]=Number[MyEeprom.EepromTestArea[2]%10];
+              
+                    from[LED_FDTimeLeft_COM1]=Number[MyEeprom.EepromTestArea[3]/100]; //3
+                    from[LED_FDTimeLeft_COM2]=Number[MyEeprom.EepromTestArea[3]%100/10];
+                    from[LED_FDTimeLeft_COM3]=Number[MyEeprom.EepromTestArea[3]%10];
+              #endif
+                    break;
+                  case 'D':
+              #if TestEeprom==TRUE
+                    //显示总共写入了多少次
+                    from[LED_RealTemp_COM1]=Number[MyEeprom.EepromTestWriteCount/1000000];
+                    from[LED_RealTemp_COM2]=Number[MyEeprom.EepromTestWriteCount%1000000/100000]&SEG_DPOFF; //1
+                    from[LED_RealTemp_COM3]=Number[MyEeprom.EepromTestWriteCount%100000/10000];
+                    from[LED_RealTemp_COM4]=Number[MyEeprom.EepromTestWriteCount%10000/1000];
+              
+              
+                    from[LED_RealHumidity_COM1]=Number[MyEeprom.EepromTestWriteCount%1000/100];
+                    from[LED_RealHumidity_COM2]=Number[MyEeprom.EepromTestWriteCount%100/10];
+              
+                    from[LED_FDTimeLeft_COM1]=Number[MyEeprom.EepromTestWriteCount%10];
+                    from[LED_FDTimeLeft_COM2]=ALL_SEG_OFF;
+                    from[LED_FDTimeLeft_COM3]=ALL_SEG_OFF;
+              #endif
+                    break;
+              
+                  default:
+                    break;
+                }
+              }
+              
+              #endif
  221          
  222          
  223          
@@ -254,7 +254,7 @@ line level    source
  234           Calls        :
  235           Called By    :
  236          
-C51 COMPILER V9.56.0.0   MYEEPROM                                                          07/09/2021 14:29:49 PAGE 5   
+C51 COMPILER V9.56.0.0   MYEEPROM                                                          07/09/2021 14:58:19 PAGE 5   
 
  237            History        :
  238            1.Date         : 2021/7/6
@@ -318,32 +318,32 @@ line level    source
  293   1        EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +FD_CountAdd_L*2, RunData.FD_Count & 0x00ff );
  294   1        EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +FD_CountAdd_H*2, RunData.FD_Count >> 8 );
  295   1      
-C51 COMPILER V9.56.0.0   MYEEPROM                                                          07/09/2021 14:29:49 PAGE 6   
+C51 COMPILER V9.56.0.0   MYEEPROM                                                          07/09/2021 14:58:19 PAGE 6   
 
  296   1      #if TestEeprom==TRUE //测试用
- 297   1        {
- 298   2          //测试时这几个地址更改为保存总写入次数 ,也可以自定义其他地址
- 299   2          //MyEeprom.EepromTestWriteCount=tt;
- 300   2          EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +CS_CountAddr_L*2,  MyEeprom.EepromTestWriteCo
+                {
+                  //测试时这几个地址更改为保存总写入次数 ,也可以自定义其他地址
+                  //MyEeprom.EepromTestWriteCount=tt;
+                  EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +CS_CountAddr_L*2,  MyEeprom.EepromTestWriteCo
              -unt & 0x000000ff );
- 301   2          EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +CS_CountAddr_H*2, ( MyEeprom.EepromTestWriteC
+                  EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +CS_CountAddr_H*2, ( MyEeprom.EepromTestWriteC
              -ount>>8 ) & 0x000000ff );
- 302   2          CLR_WDT;
- 303   2          EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +SetStableDukAddr_L*2, ( MyEeprom.EepromTestWr
+                  CLR_WDT;
+                  EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +SetStableDukAddr_L*2, ( MyEeprom.EepromTestWr
              -iteCount>>16 ) & 0x000000ff );
- 304   2          EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +SetStableDukAddr_H*2, ( MyEeprom.EepromTestWr
+                  EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +SetStableDukAddr_H*2, ( MyEeprom.EepromTestWr
              -iteCount>>24 ) );
- 305   2      
- 306   2        }
- 307   1      #else
               
-                EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +CS_CountAddr_L*2, RunData.CS_Count & 0x00ff );
-                EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +CS_CountAddr_H*2, RunData.CS_Count >> 8 );
-                CLR_WDT;
-                EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +SetStableDukAddr_L*2, RunData.DukBuf_H & 0x00f
+                }
+              #else
+ 308   1      
+ 309   1        EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +CS_CountAddr_L*2, RunData.CS_Count & 0x00ff );
+ 310   1        EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +CS_CountAddr_H*2, RunData.CS_Count >> 8 );
+ 311   1        CLR_WDT;
+ 312   1        EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +SetStableDukAddr_L*2, RunData.DukBuf_H & 0x00f
              -f );
-                EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +SetStableDukAddr_H*2, RunData.DukBuf_H >> 8 );
-              #endif
+ 313   1        EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +SetStableDukAddr_H*2, RunData.DukBuf_H >> 8 );
+ 314   1      #endif
  315   1         /*********************************END********************************************/
  316   1      
  317   1      
@@ -382,7 +382,7 @@ line level    source
  350              Modification : Created function
  351          
  352          *****************************************************************************/
-C51 COMPILER V9.56.0.0   MYEEPROM                                                          07/09/2021 14:29:49 PAGE 7   
+C51 COMPILER V9.56.0.0   MYEEPROM                                                          07/09/2021 14:58:19 PAGE 7   
 
  353          unsigned char MyEepromRead(unsigned char addr)
  354          {
@@ -414,9 +414,9 @@ line level    source
  380          void ReadSameDataFromEeprom()
  381          {
  382   1          #if TestEeprom==TRUE
- 383   1             if(MyEeprom.EepromTestWriteCount==0) //上电读取擦除次数
- 384   1             MyEepromTestHandle ( FALSE,'A' );
- 385   1          #endif
+                     if(MyEeprom.EepromTestWriteCount==0) //上电读取擦除次数
+                     MyEepromTestHandle ( FALSE,'A' );
+                  #endif
  386   1      
  387   1        SetData.FH_Mode=MyEepromRead ( FH_ModeAddr );
  388   1      
@@ -444,14 +444,14 @@ line level    source
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   1372    ----
+   CODE SIZE        =    524    ----
    CONSTANT SIZE    =   ----    ----
-C51 COMPILER V9.56.0.0   MYEEPROM                                                          07/09/2021 14:29:49 PAGE 8   
+C51 COMPILER V9.56.0.0   MYEEPROM                                                          07/09/2021 14:58:19 PAGE 8   
 
-   XDATA SIZE       =     13       4
+   XDATA SIZE       =      5       4
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =   ----       4
-   IDATA SIZE       =   ----       2
+   DATA SIZE        =   ----       1
+   IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
 
