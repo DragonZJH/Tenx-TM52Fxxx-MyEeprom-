@@ -1,0 +1,55 @@
+---- LED Matches (9 in 4 files) ----
+LED.c (F:\ImportantData\MCU\SomeProgram\FHQ_Project\SHISHU\MyTouckKey\TM52Fxx_MyEeprom) line 1 : 
+
+#include "LED.H"
+
+
+		unsigned char code Number[]=
+MAIN_FHQ.c (F:\ImportantData\MCU\SomeProgram\FHQ_Project\SHISHU\MyTouckKey\TM52Fxx_MyEeprom) line 11 : 
+#include "Delay.h"
+#include "LED.h"
+
+
+#include	"setting.h"
+MyEeprom.c (F:\ImportantData\MCU\SomeProgram\FHQ_Project\SHISHU\MyTouckKey\TM52Fxx_MyEeprom) line 34 : 
+#include "TM52f82XX_Eeprom.h"
+#include "LED.h"
+#include "DEFINE.H"
+
+void EepromSaveAllDataUserHandle ( unsigned char writeOnWhichArea );
+REGtenxTM52FE8276.h (F:\ImportantData\MCU\SomeProgram\FHQ_Project\SHISHU\MyTouckKey\TM52Fxx_MyEeprom) line 604 : 
+	//LEDPSC:LEDCON Bit[5:4],
+	//LED Clock divided by, 0: 64, 1: 32, 2: 16  3: 8  ( LEDCLK  > 100K )
+	#define	LEDPSC_64	0x00
+	#define	LEDPSC_32	0x10
+	#define	LEDPSC_16	0x20
+REGtenxTM52FE8276.h (F:\ImportantData\MCU\SomeProgram\FHQ_Project\SHISHU\MyTouckKey\TM52Fxx_MyEeprom) line 610 : 
+
+	//LED hold , 1:hold LED scan, all LED pin state are Hi-Z, 0: release to run LED scan
+	#define LEDHOLD		0x08
+	#define	LEDHOLD_HOLD	LEDCON=(LEDCON&0xf7)|LEDHOLD
+	#define	LEDHOLD_RELEASE	LEDCON=(LEDCON&0xf7)
+REGtenxTM52FE8276.h (F:\ImportantData\MCU\SomeProgram\FHQ_Project\SHISHU\MyTouckKey\TM52Fxx_MyEeprom) line 616 : 
+	//LEDBRIT:LEDCON Bit[2:0]
+	//LED SEG0-~3- & COM0-~3- Brightness. 000: Most darkness, 111: Most brightness
+	#define	LCDBRIT_0	0x00	// most darkness
+	#define	LCDBRIT_1	0x01	// 
+	#define	LCDBRIT_2	0x02	// 
+REGtenxTM52FE8276.h (F:\ImportantData\MCU\SomeProgram\FHQ_Project\SHISHU\MyTouckKey\TM52Fxx_MyEeprom) line 630 : 
+
+	//"LED Brightness Smooth control
+	//0: Brightness Smooth Enable
+	//1: Brightness Smooth Disable"
+	#define LEDSMDIS 0x80
+REGtenxTM52FE8276.h (F:\ImportantData\MCU\SomeProgram\FHQ_Project\SHISHU\MyTouckKey\TM52Fxx_MyEeprom) line 637 : 
+
+	//LEDBRIT2:LEDCON2 Bit[6:4],LED SEG5- Brightness. 000: Most darkness, 111: Most brightness
+	#define	LCDBRIT2_0	0x00	// most darkness
+	#define	LCDBRIT2_1	0x10	// 
+	#define	LCDBRIT2_2	0x20	// 
+REGtenxTM52FE8276.h (F:\ImportantData\MCU\SomeProgram\FHQ_Project\SHISHU\MyTouckKey\TM52Fxx_MyEeprom) line 647 : 
+	
+	//LEDBRIT1:LEDCON2 Bit[2:0],LED SEG4- Brightness. 000: Most darkness, 111: Most brightness
+	#define	LCDBRIT1_0	0x00	// most darkness
+	#define	LCDBRIT1_1	0x01	// 
+	#define	LCDBRIT1_2	0x02	// 

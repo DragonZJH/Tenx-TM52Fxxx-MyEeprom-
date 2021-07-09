@@ -1,0 +1,400 @@
+C51 COMPILER V9.56.0.0   TM52F82XX_EEPROM                                                  07/09/2021 14:29:49 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE TM52F82XX_EEPROM
+OBJECT MODULE PLACED IN TM52F82XX_Eeprom.OBJ
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE TM52F82XX_Eeprom.c OPTIMIZE(9,SIZE) BROWSE INCDIR(.\Drivers) DEBUG OBJEC
+                    -TEXTEND TABS(2)
+
+line level    source
+
+   1          /******************************************************************************
+   2          
+   3            Copyright (C), 2015-2020, xxx Co., Ltd.
+   4          
+   5           ******************************************************************************
+   6            File Name     : TM52F82XX_Eeprom.c
+   7            Version       : Initial Draft
+   8            Author        : Dragon8814
+   9            Created       : 2021/7/6
+  10            Last Modified :
+  11            Description   : Êý¾Ý×Ô¶¯·ÖÅä±£´æÔÚ·ÖÅäµÄÇøÓò,ÓÃ»§ÎÞÐèÐÞ¸Ä
+  12            Function List :
+  13                        EepromRead
+  14                        EepromSaveAllData
+  15                        EepromSetup
+  16                        EepromWrite
+  17                        EepromWriteByte
+  18                        FindOnWhichArea
+  19                        RWEepromEnd
+  20                        RWEepromStart
+  21            History       :
+  22            1.Date        : 2021/7/6
+  23              Author      : Dragon8814
+  24              Modification: Created file
+  25          
+  26          ******************************************************************************/
+  27          
+  28          
+  29          
+  30          #include "TM52F82XX_Eeprom.h"
+  31          
+  32          volatile unsigned char xdata EepromAddress[ChipEepromRamCP] _at_ EepromStartAddr;
+  33          
+  34          volatile struct eepromUser*   EepromUser;
+  35          
+  36          /*****************************************************************************
+  37           Prototype    : EepromSetup
+  38           Description  : ³õÊ¼»¯ÄÚ´æ²¢·ÖÅä¸øÓÃ»§¶¨Òå½Ó¿Ú
+  39           Input        : struct eepromUser* ee
+  40           Output       : None
+  41           Return Value :
+  42           Calls        :
+  43           Called By    :
+  44          
+  45            History        :
+  46            1.Date         : 2021/7/6
+  47              Author       : Dragon8814
+  48              Modification : Created function
+  49          
+  50          *****************************************************************************/
+  51          void  EepromSetup ( struct eepromUser* ee )
+  52          {
+  53   1      
+  54   1        ee->EepromOnRamAddress=EepromAddress;
+C51 COMPILER V9.56.0.0   TM52F82XX_EEPROM                                                  07/09/2021 14:29:49 PAGE 2   
+
+  55   1        EepromUser=ee;
+  56   1      
+  57   1      }
+  58          
+  59          
+  60          /*****************************************************************************
+  61           Prototype    : RWEepromStart
+  62           Description  : Eeprom¿ªÊ¼Ð´Èë¼Ä´æÆ÷²Ù×÷
+  63           Input        : None
+  64           Output       : None
+  65           Return Value :
+  66           Calls        :
+  67           Called By    :
+  68          
+  69            History        :
+  70            1.Date         : 2021/7/4
+  71              Author       : Dragon8814
+  72              Modification : Created function
+  73          
+  74          *****************************************************************************/
+  75          void  RWEepromStart()
+  76          {
+  77   1        EA = 0;
+  78   1        IAPTE_22_MS;
+  79   1        IAPWE_SFR=0XE2;    //Ê¹ÄÜÐ´EEPROM
+  80   1      }
+  81          
+  82          
+  83          
+  84          /*****************************************************************************
+  85           Prototype    : RWEepromEnd
+  86           Description  : EepromÐ´Èë½áÊø¼Ä´æÆ÷²Ù×÷
+  87           Input        : None
+  88           Output       : None
+  89           Return Value :
+  90           Calls        :
+  91           Called By    :
+  92          
+  93            History        :
+  94            1.Date         : 2021/7/4
+  95              Author       : Dragon8814
+  96              Modification : Created function
+  97          
+  98          *****************************************************************************/
+  99          void RWEepromEnd()
+ 100          {
+ 101   1        IAPWE_SFR=0x00;    //¹Ø±ÕÐ´EEPROM
+ 102   1        IAPTE_DISABLE;
+ 103   1        EA = 1;
+ 104   1        Delay700us();   
+ 105   1      }
+ 106          
+ 107          /*****************************************************************************
+ 108           Prototype    : FindOnWhichArea
+ 109           Description  : ÕÒµ½µ±Ç°Êý¾ÝËùÔÚÇøÓò
+ 110           Input        : struct findOnArea* foa
+ 111           Output       : ½á¹¹Ìå·µ»ØÇøÓò0-N»òÊÇ·ñËùÓÐÇøÓòÒÑµ½´ï×î´óÐ´Èë´ÎÊýEepromMaxAreaCount
+ 112           Return Value : ·µ»ØÇøÓòÖÐµÄÊý¾Ý±£´æ×´Ì¬
+ 113           Calls        :
+ 114           Called By    :
+ 115          
+ 116            History        :
+C51 COMPILER V9.56.0.0   TM52F82XX_EEPROM                                                  07/09/2021 14:29:49 PAGE 3   
+
+ 117            1.Date         : 2021/7/4
+ 118              Author       : Dragon8814
+ 119              Modification : Created function
+ 120          
+ 121          *****************************************************************************/
+ 122          void FindOnWhichArea ( struct findOnArea* foa )
+ 123          {
+ 124   1        unsigned char area, dat;
+ 125   1        /*******************ÕæÊµ´æ·ÅµÄµØÖ·****************************
+ 126   1        **********(EepromStrogeValue*2*OnArea_N)+(addr*2)**************
+ 127   1        Èç´æ·ÅÔÚÇøÓò1ÖÐFD_TimeAddrµÄµØÖ·£º(15*2*1)+(2*2)=34
+ 128   1        **************************************************************/
+ 129   1      #if TestEeprom==TRUE
+ 130   1        RWEepromStart();
+ 131   1        for ( area=0; area<EepromMaxArea; area++ )
+ 132   1        {
+ 133   2          dat=* ( &EepromAddress+ ( EepromStrogeValue*2*area ) ); //ÇøÓòËùÔÚµØÖ·
+ 134   2          EepromUser->EepromTestArea[area]=dat;
+ 135   2        }
+ 136   1        RWEepromEnd();
+ 137   1      #endif
+ 138   1        RWEepromStart();
+ 139   1        for ( area=0; area<EepromMaxArea; area++ )
+ 140   1        {
+ 141   2          //dat=* ( &EepromAddress+ ((EepromStrogeValue*2*area)+(AreaAddr*2)) );
+ 142   2          dat=* ( &EepromAddress+ ( EepromStrogeValue*2*area ) ); //ÇøÓòËùÔÚµØÖ·
+ 143   2      
+ 144   2          if ( dat<EepromMaxAreaCount ) //ÈÎºÎÒ»¸öÇøÓòµÄ×î´óÐ´Èë´ÎÊýÃ¿³¬ ·µ»ØÊý¾Ý
+ 145   2          {
+ 146   3            foa->whichhArea=area;
+ 147   3            foa->AreaCount=dat;
+ 148   3            RWEepromEnd();
+ 149   3            return;
+ 150   3          }
+ 151   2        }
+ 152   1        RWEepromEnd();
+ 153   1      
+ 154   1        //³ö´í£¬³¬³ö×î´óÇøÓò
+ 155   1        {
+ 156   2          foa->whichhArea= OutOfTheArea;
+ 157   2          return ;
+ 158   2        }
+ 159   1      
+ 160   1      }
+ 161          
+ 162          /*****************************************************************************
+ 163           Prototype    : EepromRead
+ 164           Description  : EepromÊý¾Ý¶ÁÈ¡
+ 165           Input        : ¶ÁÈ¡Êý¾ÝµØÖ·
+ 166           Output       : None
+ 167           Return Value : µØÖ·¶ÔÓ¦µÄÊý¾Ý
+ 168           Calls        :
+ 169           Called By    :
+ 170          
+ 171            History        :
+ 172            1.Date         : 2021/7/4
+ 173              Author       : Dragon8814
+ 174              Modification : Created function
+ 175          
+ 176          *****************************************************************************/
+ 177          unsigned char EepromRead ( unsigned int addr )
+ 178          {
+C51 COMPILER V9.56.0.0   TM52F82XX_EEPROM                                                  07/09/2021 14:29:49 PAGE 4   
+
+ 179   1        unsigned char  dat=0;
+ 180   1        struct findOnArea fOA;
+ 181   1        FindOnWhichArea ( &fOA );
+ 182   1        if ( fOA.whichhArea ==OutOfTheArea )
+ 183   1        {
+ 184   2          //ËùÓÐÇøÓò¶¼³¬¹ý×î´óÐ´Èë´ÎÊý ³ö´í
+ 185   2          //Ö»»á³öÏÖÔÚÐ¾Æ¬µÚÒ»´ÎÔËÐÐµÄÊ±ºò£¬ÒòÎªÄÇÊ±ºòµÄEEPROMÊý¾ÝÊ±²»È·¶¨µÄ
+ 186   2          //Èç¹ûµÚÒ»´ÎÔËÐÐ³ÌÐòÃ»ÓÐ½øÈë´Ë´¦£¬³ÌÐòÔÚ³õÊ¼»¯µÄÊ±ºòÒª×ö¶ÁÈ¡´íÎó´¦Àí
+ 187   2          fOA.whichhArea=0;
+ 188   2          EepromSaveAllData ( fOA.whichhArea,FALSE ); //³ö´í¸üÐÂÇøÓò0
+ 189   2      
+ 190   2        }
+ 191   1      
+ 192   1        RWEepromStart();
+ 193   1        dat=* ( &EepromAddress+ ( EepromStrogeValue*2* fOA.whichhArea )+ ( addr*2 ) ) ;
+ 194   1        RWEepromEnd();
+ 195   1        return dat;
+ 196   1      }
+ 197          
+ 198          
+ 199          
+ 200          
+ 201          /*****************************************************************************
+ 202           Prototype    : EepromWriteByte
+ 203           Description  : EepromÖ±½ÓÐ´ÈëÒ»¸ö×Ö½Ú Ã»ÓÐÃ÷È·µÄÐ´ÈëÇøÓò½¨Òé²»ÒªËæÒâµ÷ÓÃ
+ 204           Input        : addr: Ð´ÈëµÄÊý¾ÝËùÔÚµØÖ·
+ 205                          dat £ºÐ´ÈëµÄÊý¾Ý
+ 206           Output       : None
+ 207           Return Value :
+ 208           Calls        :
+ 209           Called By    :
+ 210          
+ 211            History        :
+ 212            1.Date         : 2021/7/4
+ 213              Author       : Dragon8814
+ 214              Modification : Created function
+ 215          
+ 216          *****************************************************************************/
+ 217          void EepromWriteByte ( unsigned int addr,unsigned char dat )
+ 218          {
+ 219   1        unsigned char edat = 0;
+ 220   1      
+ 221   1      #if TestEeprom!=TRUE  //²âÊÔÊ±È«Ð´
+                RWEepromStart();
+                edat=* ( &EepromAddress+addr );
+                RWEepromEnd();
+                if ( edat!=dat )
+              #endif
+ 227   1        {
+ 228   2          RWEepromStart();
+ 229   2          * ( &EepromAddress+addr ) =dat;
+ 230   2          RWEepromEnd();
+ 231   2        }
+ 232   1      
+ 233   1      }
+ 234          
+ 235          /*****************************************************************************
+ 236           Prototype    : EepromSaveAllData
+ 237           Description  : ±£´æ¡¢¸üÐÂËùÓÐÊý¾Ý
+ 238           Input        : writeOnWhichArea:±£´æÔÚÄÄ¸öÇøÓò
+ 239                          isSaveAllOnThisArea:ÊÇ·ñ±£´æµ½µ±Ç°ÇøÓò£¬
+ 240          
+C51 COMPILER V9.56.0.0   TM52F82XX_EEPROM                                                  07/09/2021 14:29:49 PAGE 5   
+
+ 241           Output       : None
+ 242           Return Value : None
+ 243           Calls        :
+ 244           Called By    :
+ 245          
+ 246            History        :
+ 247            1.Date         : 2021/7/4
+ 248              Author       : Dragon8814
+ 249              Modification : Created function
+ 250          
+ 251          *****************************************************************************/
+ 252          void  EepromSaveAllData ( unsigned char writeOnWhichArea,unsigned char isSaveAllOnThisArea )
+ 253          {
+ 254   1        //Ö»ÔÚµ±Ç°ÇøÓò¸úÐÂËùÓÐÊý¾ÝºöÂÔ
+ 255   1        if ( isSaveAllOnThisArea!=TRUE )
+ 256   1        {
+ 257   2      
+ 258   2          EepromWriteByte ( EepromStrogeValue*2*writeOnWhichArea,1 ); //µ±Ç°ÇøÐ´Èë´ÎÊý¸ü¸ÄÎª1
+ 259   2      
+ 260   2          //ÉÏÒ»ÇøÐ´Èë´ÎÊý±êÖ¾ÎªÐ´Âú =EepromMaxAreaCount
+ 261   2          //Èç¹ûµ±Ç°ÇøÓòÊÇµÚÒ»Çø0£¬ÔòÉÏÒ»ÇøÎªEepromLastArea×îºóÇøÓò
+ 262   2          EepromWriteByte ( EepromStrogeValue*2* ( writeOnWhichArea!=0?writeOnWhichArea-1:EepromLastArea ), Eeprom
+             -MaxAreaCount );
+ 263   2      #if TestEeprom==TRUE
+ 264   2          EepromUser->EepromTestArea[writeOnWhichArea]=1;
+ 265   2          EepromUser->EepromTestArea[writeOnWhichArea!=0?writeOnWhichArea-1:EepromLastArea]=EepromMaxAreaCount;
+ 266   2      #endif
+ 267   2        }
+ 268   1        EepromUser->SaveAllDataOnUserHandle ( writeOnWhichArea );
+ 269   1      
+ 270   1      }
+ 271          
+ 272          
+ 273          /*****************************************************************************
+ 274           Prototype    : EepromWrite
+ 275           Description  : EepromÐ´Êý¾Ý²Ù×÷
+ 276           Input        : unsigned int  addr 
+ 277                          unsigned char dat  
+ 278                          unsigned char isSaveAll 
+ 279           Output       : None
+ 280           Return Value :
+ 281           Calls        :
+ 282           Called By    :
+ 283          
+ 284            History        :
+ 285            1.Date         : 2021/7/4
+ 286              Author       : Dragon8814
+ 287              Modification : Created function
+ 288          
+ 289          *****************************************************************************/
+ 290          void EepromWrite ( unsigned int  addr,unsigned char dat,unsigned char isSaveAll )
+ 291          {
+ 292   1        struct findOnArea fOA;
+ 293   1        unsigned char isN;
+ 294   1      
+ 295   1        FindOnWhichArea ( &fOA );
+ 296   1        if ( fOA.whichhArea<EepromMaxArea )
+ 297   1        {
+ 298   2          if ( fOA.AreaCount>EepromMaxAreaCount-2 )
+ 299   2          {
+ 300   3            if ( fOA.whichhArea==EepromLastArea ) //×îºóÒ»¸öÇøÓòÒÑ¾­Ð´Âú´ÎÊýÁË£¬Ôò×ªµ½µÚÒ»¸öÇøÓò
+ 301   3            {
+C51 COMPILER V9.56.0.0   TM52F82XX_EEPROM                                                  07/09/2021 14:29:49 PAGE 6   
+
+ 302   4              fOA.whichhArea=0;
+ 303   4            }
+ 304   3            else
+ 305   3            {
+ 306   4              fOA.whichhArea++;    //²»ÊÇ×îºóÒ»¸öÇøÓò£¬Ôò×ªµ½ÏÂ¸öÇøÓò
+ 307   4            }
+ 308   3            isN=TRUE; //ÇøÓòÐ´Âú Êµ¼ÊÐ´Èë´ÎÊýEepromMaxAreaCount-1¸ö Êý¾Ý¸üÐÂµ½ÏÂ¸öÇøÓò
+ 309   3          }
+ 310   2          else
+ 311   2          {
+ 312   3            isN=FALSE;//°´µØÖ·Õý³£Ð´ÈëÊý¾Ý
+ 313   3          }
+ 314   2      
+ 315   2        }
+ 316   1        else
+ 317   1        {
+ 318   2          fOA.whichhArea=0; //³ö´íËùÓÐÊý¾Ý¸üÐÂµ½ÇøÓò0
+ 319   2          isN=TRUE;
+ 320   2        }
+ 321   1      
+ 322   1        if ( isN==TRUE )  //µ±Ç°µÄÇøÓòÐ´ÈëÐÂÊý¾ÝÌõ¼þ²»Âú×ã£¬ÐèÒªÒ»²¢¸üÐÂËùÓÐÊý¾Ý
+ 323   1        {
+ 324   2          
+ 325   2      #if TestEeprom==TRUE
+ 326   2          EepromUser->EepromTestWriteCount++;
+ 327   2      #endif
+ 328   2               EepromSaveAllData ( fOA.whichhArea,FALSE );
+ 329   2        }
+ 330   1        else
+ 331   1        {
+ 332   2      #if TestEeprom==TRUE
+ 333   2          EepromUser->EepromTestWriteCount++;
+ 334   2      #endif  
+ 335   2          //Ð´ÔÚµ±Ç°ÇøÓò
+ 336   2          
+ 337   2          /*************************ÕæÊµ´æ·ÅµÄµØÖ·*******************
+ 338   2           *   (EepromStrogeValue*2*OnArea_N)+(addr*2)              *
+ 339   2           *  Èç´æ·ÅÔÚÇøÓò1ÖÐFD_TimeAddrµÄµØÖ·£º(15*2*1)+(2*2)=34              *
+ 340   2           *  Ð¾Æ¬EepromÆðÊ¼µØÖ·ÒÑ¾­Ôö¼ÓÔÚÐ´Êý¾Ýº¯Êý                                *
+ 341   2           **********************************************************/
+ 342   2          EepromWriteByte ( EepromStrogeValue*2*fOA.whichhArea+AreaAddr*2,++fOA.AreaCount ); //ÔÚËùÔÚÇøÓòÐ´ÈëÔö¼Ó´
+             -ÎÊý
+ 343   2      
+ 344   2          if ( isSaveAll ) //ÔÚµ±Ç°Çø¸üÐÂËùÓÐÊý¾Ý
+ 345   2          {
+ 346   3      
+ 347   3            EepromSaveAllData ( fOA.whichhArea,TRUE );
+ 348   3          }
+ 349   2      
+ 350   2          //ÔÚµ±Ç°Çø¸üÐÂ¸ö±ðÊý¾Ý
+ 351   2          else
+ 352   2          {
+ 353   3            EepromWriteByte ( EepromStrogeValue*2*fOA.whichhArea+addr*2,dat );
+ 354   3          }
+ 355   2      
+ 356   2      
+ 357   2        }
+ 358   1      
+ 359   1      }
+ 360          
+ 361          
+ 362          
+C51 COMPILER V9.56.0.0   TM52F82XX_EEPROM                                                  07/09/2021 14:29:49 PAGE 7   
+
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    547    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      3      22
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

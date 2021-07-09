@@ -1,0 +1,13 @@
+"STARTUP_TENX52.obj",
+"MAIN_FHQ.obj",
+"DEFINE.obj",
+"Delay.obj",
+"LED.obj",
+"Uart.obj",
+"MyEeprom.obj",
+"TM52F82XX_Eeprom.obj" 
+TO "MyEepromTest" 
+RAMSIZE(256) 
+DISABLEWARNING (16) 
+CODE( 0x00-0x32,0x3b-0x2cff,0x3000-0x3fef )
+XDATA( 0xfd00-0xffff )

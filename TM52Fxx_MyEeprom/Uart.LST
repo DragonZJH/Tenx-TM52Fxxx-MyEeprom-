@@ -1,0 +1,169 @@
+C51 COMPILER V9.56.0.0   UART                                                              07/09/2021 14:29:49 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE UART
+OBJECT MODULE PLACED IN Uart.OBJ
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE Uart.c OPTIMIZE(9,SIZE) BROWSE INCDIR(.\Drivers) DEBUG OBJECTEXTEND TABS
+                    -(2)
+
+line level    source
+
+   1          
+   2          #include "Uart.h"
+   3          
+   4          uart_status UARTStatus;
+   5          
+   6          
+   7          //¥Æø⁄≥ı ºªØ
+   8          void UartInit ( void ) //24M 9600
+   9          {
+  10   1        
+  11   1        //µ⁄∆ﬂŒªŒ™1, µº  «…Ë÷√≤®Ãÿ¬ µƒÀ´±∂  --»Á…Ë÷√µƒ «9600‘Ú µº …œΩ” ’∫Õ∑¢ÀÕ≤®Ãÿ¬ Œ™19200
+  12   1        PCON=(PCON&~0X80)|(0<<7);  //UART1Ω˚÷πÀ´≤®Ãÿ¬ £¨µ⁄∆ﬂŒªŒ™1, µº  «…Ë÷√≤®Ãÿ¬ µƒÀ´±∂  »Á…Ë÷√9600‘ÚΩ” ’∫Õ∑¢ÀÕ 
+             -µº Œ™19200
+  13   1        OPTION=OPTION&~0X80; //Ω˚÷π“ªœﬂƒ£ Ω
+  14   1        //SCON=0X50;         //8Œª ˝æ›,ø…±‰≤®Ãÿ¬ 
+  15   1        SM0=0;               //ƒ£ Ω1 8Œª ˝æ›,ø…±‰≤®Ãÿ¬ 
+  16   1        SM1=1;
+  17   1        SM2=0;
+  18   1      
+  19   1        
+  20   1        RCLK=0;            //time1“Á≥ˆ◊˜Œ™¥Æø⁄Ω” ‹ 
+  21   1        TCLK=0;            //time1“Á≥ˆ◊˜Œ™¥Æø⁄∑¢ÀÕ
+  22   1      
+  23   1        
+  24   1          TMOD=(TMOD&0XCF|0X20); //8 Œª◊‘∂Ø÷ÿ‘ÿ∂® ±∆˜/º∆ ˝∆˜(TL1),“Á≥ˆ ±¥” TH1 ÷ÿ–¬◊∞‘ÿ
+  25   1        //≤®Ãÿ¬ =(SMOD+1) x FSYSCLK /(32x2x (256 ®C TH1))
+  26   1        TH1=232;           //9600 ◊‘∂Ø÷ÿ‘ÿ
+  27   1      
+  28   1        ET1=0;             //Ω˚÷πTIMEER1÷–∂œ
+  29   1        TR1=1;             //∆Ù∂Ø∂® ±∆˜1
+  30   1      
+  31   1        REN=1;              //‘ –ÌΩ” ’
+  32   1        ES=1;              //‘ –Ì¥Æø⁄÷–∂œ
+  33   1        
+  34   1      }
+  35          
+  36          void Uart_Send_Byte ( unsigned char data1 )
+  37          {
+  38   1        
+  39   1        TI=0;
+  40   1        SBUF=data1;
+  41   1          while (  !TI );
+  42   1        TI=0;
+  43   1      
+  44   1      }
+  45          
+  46          
+  47          
+  48          
+  49          void UartSendArray ( unsigned char* array,unsigned char t )
+  50          {
+  51   1        unsigned char i;
+  52   1      
+  53   1        for ( i=0; i<t; i++ )
+C51 COMPILER V9.56.0.0   UART                                                              07/09/2021 14:29:49 PAGE 2   
+
+  54   1        {
+  55   2          Uart_Send_Byte ( array[i] );
+  56   2        }
+  57   1      
+  58   1      }
+  59          
+  60          #if 0
+              
+              unsigned int StringLen(char *string){
+                unsigned int len=0;
+                 while(*string){
+                       string++;
+                       len++;
+                 }
+                 return len;
+              }
+              void UartSendString (  char* string )
+              {
+                unsigned char i;
+                unsigned int t= StringLen(string);
+                for ( i=0; i<t; i++ )
+                {
+                  Uart_Send_Byte ( string[i] );
+                }
+              
+              }
+              
+              unsigned char ChuckUartStatus()
+              {
+                if(PCON&~0X80) return FALSE;
+                if(OPTION&~0X80) return FALSE;
+                if(SM0|RCLK|TCLK) return FALSE;
+                if(!(SM1&REN&ES&TR1)) return FALSE;
+                 return TRUE;
+              }
+              
+              void Uart_SetTimeOut(){
+              
+              if ( UARTStatus.Run==UART_BUSY )
+                {
+              
+                  if ( UARTStatus.TimeOutCout<UART_TIME_OUT_50MS )
+              
+                  {
+                    UARTStatus.TimeOutCout++;
+                  }
+              
+                }
+              
+              
+              }
+              
+              void Uart_ReceiveTimeOutChuck()
+              {
+                if ( UARTStatus.TimeOutCout>=UART_TIME_OUT_50MS )
+                {
+                  UARTStatus.Run=UART_IDLE;
+                  UARTStatus.TimeOutCout=0;
+                  UARTStatus.CharCount=0;
+                  // AddArrayList ( &ArrayList_SendData,UartReadData );
+                }
+              
+C51 COMPILER V9.56.0.0   UART                                                              07/09/2021 14:29:49 PAGE 3   
+
+              }
+              #endif
+ 118          
+ 119          
+ 120          //¥Æø⁄÷–∂œ
+ 121          void UART_int ( void ) interrupt 4
+ 122          {
+ 123   1        unsigned char data a=0;
+ 124   1        if ( TI )
+ 125   1        {
+ 126   2          TI=0;
+ 127   2          return;
+ 128   2        }
+ 129   1        if ( RI )
+ 130   1        {
+ 131   2          RI=0;
+ 132   2          SBUF=SBUF;
+ 133   2        }
+ 134   1      
+ 135   1      
+ 136   1      }
+ 137          
+ 138          
+ 139          
+ 140          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     99    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      4       4
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
