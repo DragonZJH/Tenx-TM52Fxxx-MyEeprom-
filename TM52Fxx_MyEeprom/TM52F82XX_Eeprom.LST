@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   TM52F82XX_EEPROM                                                  07/10/2021 09:48:15 PAGE 1   
+C51 COMPILER V9.56.0.0   TM52F82XX_EEPROM                                                  07/10/2021 20:04:08 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE TM52F82XX_EEPROM
@@ -62,7 +62,7 @@ line level    source
   52          {
   53   1      
   54   1        ee->EepromOnRamAddress=EepromAddress;
-C51 COMPILER V9.56.0.0   TM52F82XX_EEPROM                                                  07/10/2021 09:48:15 PAGE 2   
+C51 COMPILER V9.56.0.0   TM52F82XX_EEPROM                                                  07/10/2021 20:04:08 PAGE 2   
 
   55   1        EepromUser=ee;
   56   1      
@@ -126,7 +126,7 @@ line level    source
  114           Called By    :
  115          
  116            History        :
-C51 COMPILER V9.56.0.0   TM52F82XX_EEPROM                                                  07/10/2021 09:48:15 PAGE 3   
+C51 COMPILER V9.56.0.0   TM52F82XX_EEPROM                                                  07/10/2021 20:04:08 PAGE 3   
 
  117            1.Date         : 2021/7/4
  118              Author       : Dragon8814
@@ -190,7 +190,7 @@ line level    source
  176          *****************************************************************************/
  177          unsigned char EepromRead ( unsigned int addr )
  178          {
-C51 COMPILER V9.56.0.0   TM52F82XX_EEPROM                                                  07/10/2021 09:48:15 PAGE 4   
+C51 COMPILER V9.56.0.0   TM52F82XX_EEPROM                                                  07/10/2021 20:04:08 PAGE 4   
 
  179   1        unsigned char  dat=0;
  180   1        struct findOnArea fOA;
@@ -254,7 +254,7 @@ line level    source
  238           Input        : writeOnWhichArea:保存在哪个区域
  239                          isSaveAllOnThisArea:是否保存到当前区域，
  240          
-C51 COMPILER V9.56.0.0   TM52F82XX_EEPROM                                                  07/10/2021 09:48:15 PAGE 5   
+C51 COMPILER V9.56.0.0   TM52F82XX_EEPROM                                                  07/10/2021 20:04:08 PAGE 5   
 
  241           Output       : None
  242           Return Value : None
@@ -318,7 +318,7 @@ line level    source
  299   2          {
  300   3            if ( fOA.whichhArea==EepromLastArea ) //最后一个区域已经写满次数了，则转到第一个区域
  301   3            {
-C51 COMPILER V9.56.0.0   TM52F82XX_EEPROM                                                  07/10/2021 09:48:15 PAGE 6   
+C51 COMPILER V9.56.0.0   TM52F82XX_EEPROM                                                  07/10/2021 20:04:08 PAGE 6   
 
  302   4              fOA.whichhArea=0;
  303   4            }
@@ -382,7 +382,7 @@ line level    source
  360          
  361          
  362          
-C51 COMPILER V9.56.0.0   TM52F82XX_EEPROM                                                  07/10/2021 09:48:15 PAGE 7   
+C51 COMPILER V9.56.0.0   TM52F82XX_EEPROM                                                  07/10/2021 20:04:08 PAGE 7   
 
 
 

@@ -124,9 +124,10 @@ void MyEepromTestHandle ( char* from,unsigned char flag )
 
 		case 'A':
 #if TestEeprom==TRUE
-			//启动时读取每个区域写入次数的
+			//读取每个区域写入次数的
 			for ( t=0; t<EepromMaxArea; t++ )
-			{
+			{ 
+			    //已知区域直接根据地址读取相应的数据
 				RWEepromStart();
 				MyEeprom.EepromTestArea[t]= * ( MyEeprom.EepromOnRamAddress+ ( EepromStrogeValue*2*t ) );
 				RWEepromEnd();
@@ -139,29 +140,15 @@ void MyEepromTestHandle ( char* from,unsigned char flag )
 					break;
 				}
 
-
 			}
+			//已知区域直接根据地址读取相应的数据
 			RWEepromStart();
-			//MyEeprom.EepromTestWriteCount = ( unsigned long ) ( * ( MyEeprom.EepromOnRamAddress+ ( EepromStrogeValue*2* area )+CS_CountAddr_L *2  ) ) ;
-			//MyEeprom.EepromTestWriteCount|= ( ( ( unsigned long )  ( * ( MyEeprom.EepromOnRamAddress+ ( EepromStrogeValue*2* area )+ CS_CountAddr_H *2      ) ) ) <<8 );
-
-			MyEeprom.EepromTestWriteCount = ( unsigned long ) ( * ( MyEeprom.EepromOnRamAddress+ ( EepromStrogeValue*2* area )+FD_CountAdd_L *2  ) ) ;
-			MyEeprom.EepromTestWriteCount|= ( ( ( unsigned long )  ( * ( MyEeprom.EepromOnRamAddress+ ( EepromStrogeValue*2* area )+ FD_CountAdd_H *2		) ) ) <<8 );
-						
-
+			MyEeprom.EepromTestWriteCount = ( unsigned long ) ( * ( MyEeprom.EepromOnRamAddress+ ( EepromStrogeValue*2* area )+CS_CountAddr_L *2  ) ) ;
+			MyEeprom.EepromTestWriteCount|= ( ( ( unsigned long )  ( * ( MyEeprom.EepromOnRamAddress+ ( EepromStrogeValue*2* area )+ CS_CountAddr_H *2      ) ) ) <<8 );
 			MyEeprom.EepromTestWriteCount|= ( ( ( unsigned long )  ( * ( MyEeprom.EepromOnRamAddress+ ( EepromStrogeValue*2* area )+ SetStableDukAddr_L *2  ) ) ) <<16 );
 			MyEeprom.EepromTestWriteCount|= ( ( ( unsigned long )  ( * ( MyEeprom.EepromOnRamAddress+ ( EepromStrogeValue*2* area )+ SetStableDukAddr_H *2  ) ) ) <<24 );
-
 			RWEepromEnd();
 #endif
-
-
-
-//			MyEeprom.EepromTestWriteCount = ( unsigned long ) EepromRead( CS_CountAddr_L  ) ;
-//			MyEeprom.EepromTestWriteCount|= ( ( ( unsigned long )  EepromRead ( CS_CountAddr_H) ) <<8 );
-//			MyEeprom.EepromTestWriteCount|= ( ( ( unsigned long )  EepromRead( SetStableDukAddr_L ) )  <<16 );
-//			MyEeprom.EepromTestWriteCount|= ( ( ( unsigned long )  EepromRead(  SetStableDukAddr_H  ) ) <<24 );
-//
 
 			break;
 		case 'B':
@@ -296,23 +283,14 @@ void MyEepromSaveAllDataUserHandle ( unsigned char writeOnWhichArea )
 	EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +SystemStartFlagAddr*2, ( unsigned char ) SystemStart_Flag );
 	EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +WorkTimeAddr_L*2, RunData.WorkTime_Second & 0x00ff );
 	EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +WorkTimeAddr_H*2, RunData.WorkTime_Second >> 8 );
-	//EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +FD_CountAdd_L*2, RunData.FD_Count & 0x00ff );
-	//EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +FD_CountAdd_H*2, RunData.FD_Count >> 8 );
-
-	//RunData.FD_Count=0x1234;
-
-	EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +CS_CountAddr_L*2, RunData.FD_Count & 0x00ff );
-    EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +CS_CountAddr_H*2, RunData.FD_Count >> 8 );
-
+	EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +FD_CountAdd_L*2, RunData.FD_Count & 0x00ff );
+	EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +FD_CountAdd_H*2, RunData.FD_Count >> 8 );
 #if TestEeprom==TRUE //测试用
 	{
 		//测试时这几个地址更改为保存总写入次数 ,也可以自定义其他地址
 		//MyEeprom.EepromTestWriteCount=162000;
-		//EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +CS_CountAddr_L*2,  MyEeprom.EepromTestWriteCount & 0x000000ff );
-		//EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +CS_CountAddr_H*2, ( MyEeprom.EepromTestWriteCount>>8 ) & 0x000000ff );
-        
-		EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +FD_CountAdd_L*2,  MyEeprom.EepromTestWriteCount & 0x000000ff );
-		EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +FD_CountAdd_H*2, ( MyEeprom.EepromTestWriteCount>>8 ) & 0x000000ff );
+		EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +CS_CountAddr_L*2,  MyEeprom.EepromTestWriteCount & 0x000000ff );
+		EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +CS_CountAddr_H*2, ( MyEeprom.EepromTestWriteCount>>8 ) & 0x000000ff );
 		CLR_WDT;
 		EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +SetStableDukAddr_L*2, ( MyEeprom.EepromTestWriteCount>>16 ) & 0x000000ff );
 		EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +SetStableDukAddr_H*2, ( MyEeprom.EepromTestWriteCount>>24 ) );
@@ -408,13 +386,8 @@ void ReadSameDataFromEeprom()
 	SystemStart_Flag= ( bit ) MyEepromRead ( SystemStartFlagAddr );
 	RunData.WorkTime_Second=MyEepromRead ( WorkTimeAddr_L )+ ( ( unsigned int ) MyEepromRead ( WorkTimeAddr_H ) <<8 ) ;
 	RunData.WorkTimeBuf=RunData.WorkTime_Second;
-	//RunData.FD_Count=MyEepromRead (  FD_CountAdd_L );
-	//RunData.FD_Count+= ( ( unsigned int ) MyEepromRead ( FD_CountAdd_H ) <<8 );
-
-    
-	RunData.FD_Count=MyEepromRead (  CS_CountAddr_L );
-	RunData.FD_Count+= ( ( unsigned int ) MyEepromRead ( CS_CountAddr_H ) <<8 );
-
+	RunData.FD_Count=MyEepromRead (  FD_CountAdd_L );
+	RunData.FD_Count+= ( ( unsigned int ) MyEepromRead ( FD_CountAdd_H ) <<8 );
 	RunData.CS_Count=MyEepromRead ( CS_CountAddr_L )+ ( ( unsigned int ) MyEepromRead ( CS_CountAddr_H ) <<8 ) ;
 
 
