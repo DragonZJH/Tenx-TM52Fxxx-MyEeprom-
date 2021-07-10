@@ -14,7 +14,7 @@
  次数已经超过18万次多，数据没有发现异常.<br>
  
  ____
-### 模块配置使用步骤----MyEeprom.h头文件<br>
+* ### 模块配置使用步骤----MyEeprom.h头文件<br>
 >* `1:`  根据提示修改以下宏定义<br>
 >>>>#define ChipEepromRamCP  256	   //芯片EepromRam的容量大小<br>
 >>>>#define EepromStartAddr  0XEE00	  //这个芯片EEPROM物理内存中起始地址<br>
@@ -27,7 +27,7 @@
 
 >* `3：` 如果需要调试或其他测试，设置宏定义 TestEeprom  为TRUE <br> 
      
-### 模块配置使用步骤----MyEeprom.c文件
+* ### 模块配置使用步骤----MyEeprom.c文件
 >* `1：` 在工程初始化调用函数-->MyEepromInit()<br>
 
 
