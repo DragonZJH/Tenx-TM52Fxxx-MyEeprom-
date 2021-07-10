@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   MAIN_FHQ                                                          07/09/2021 14:58:18 PAGE 1   
+C51 COMPILER V9.56.0.0   MAIN_FHQ                                                          07/10/2021 09:48:14 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MAIN_FHQ
@@ -62,7 +62,7 @@ line level    source
   52          
   53          #include "Delay.h"
   54          #include "LED.h"
-C51 COMPILER V9.56.0.0   MAIN_FHQ                                                          07/09/2021 14:58:18 PAGE 2   
+C51 COMPILER V9.56.0.0   MAIN_FHQ                                                          07/10/2021 09:48:14 PAGE 2   
 
   55          
   56          
@@ -102,8 +102,8 @@ line level    source
   90   1        Timer0_Init();
   91   1      
   92   1        #if TestEeprom==TRUE
-                MyEeprom.EepromTestWriteCount=0;
-                  #endif
+  93   1        MyEeprom.EepromTestWriteCount=0;
+  94   1          #endif
   95   1        ReadSameDataFromEeprom();
   96   1      
   97   1        
@@ -126,243 +126,243 @@ line level    source
  114          
  115          
  116          #if TestEeprom==TRUE
-C51 COMPILER V9.56.0.0   MAIN_FHQ                                                          07/09/2021 14:58:18 PAGE 3   
+C51 COMPILER V9.56.0.0   MAIN_FHQ                                                          07/10/2021 09:48:14 PAGE 3   
 
-              //需要用户自行加入LED显示模块
-              void SetLEDDisplay()
-              {
-              
-                  //eeprom测试用
-                if ( RunData.WorkCount_60s<20 )
-                {
-                  MyEepromTestHandle  ( ( char* ) LEDShow,'C' ); //LED显示相应区域
-                }
-                else
-                {
-                  MyEepromTestHandle ( ( char* ) LEDShow,'D' );//LED显示总写入次数
-                }
-              }
-              
-              #endif
+ 117          //需要用户自行加入LED显示模块
+ 118          void SetLEDDisplay()
+ 119          {
+ 120   1      
+ 121   1          //eeprom测试用
+ 122   1        if ( RunData.WorkCount_60s<20 )
+ 123   1        {
+ 124   2          MyEepromTestHandle  ( ( char* ) LEDShow,'C' ); //LED显示相应区域
+ 125   2        }
+ 126   1        else
+ 127   1        {
+ 128   2          MyEepromTestHandle ( ( char* ) LEDShow,'D' );//LED显示总写入次数
+ 129   2        }
+ 130   1      }
+ 131          
+ 132          #endif
  133          
  134          #if TestEeprom
-              unsigned char GetHex(unsigned char dat )
-              {
-                if(dat==0)
-                  return 0x30;
-               if(dat<10)
-                  return dat+0x30;
-                else
-                  return dat+0x37;
-                  
-              }
-              
-              #endif
+ 135          unsigned char GetHex(unsigned char dat )
+ 136          {
+ 137   1        if(dat==0)
+ 138   1          return 0x30;
+ 139   1       if(dat<10)
+ 140   1          return dat+0x30;
+ 141   1        else
+ 142   1          return dat+0x37;
+ 143   1          
+ 144   1      }
+ 145          
+ 146          #endif
  147          
  148          
  149          void SendToUart()
  150          {
  151   1         #if TestEeprom==TRUE
-                 /***********************************************************
-                   每1S发送一次
-                   注意因为过快的写入和读取时间导致有些参数始终没有变化的问题
-                 ************************************************************/
-                if ( ( RunData.SendDataToUartCount >=1 )  ) 
-                {
-              
-                  unsigned char xdata send[100];
-                  unsigned char  t=0;
-                  MyEepromTestHandle ( FALSE,'A' );
-              
-                  ReadSameDataFromEeprom();
-              
-                  send[t++]=  'M' ;
-                  send[t++]=  'y' ;
-                  send[t++]= 'E' ;
-                  send[t++]=  'e' ;
-                  send[t++]=  'p' ;
-                  send[t++]=  'r' ;
-                  send[t++]= 'o' ;
-                  send[t++]=  'm' ;
-                  send[t++]= 'T' ;
-                  send[t++]=  'e' ;
-                  send[t++]=  's' ;
-                  send[t++]=  't' ;
-                  send[t++]=  ':' ;
-                  send[t++]=  '\r' ;
-C51 COMPILER V9.56.0.0   MAIN_FHQ                                                          07/09/2021 14:58:18 PAGE 4   
+ 152   1         /***********************************************************
+ 153   1           每1S发送一次
+ 154   1           注意因为过快的写入和读取时间导致有些参数始终没有变化的问题
+ 155   1         ************************************************************/
+ 156   1        if ( ( RunData.SendDataToUartCount >=1)  ) 
+ 157   1        {
+ 158   2      
+ 159   2          unsigned char xdata send[100];
+ 160   2          unsigned char  t=0;
+ 161   2          MyEepromTestHandle ( FALSE,'A' );
+ 162   2      
+ 163   2          ReadSameDataFromEeprom();
+ 164   2      
+ 165   2          send[t++]=  'M' ;
+ 166   2          send[t++]=  'y' ;
+ 167   2          send[t++]= 'E' ;
+ 168   2          send[t++]=  'e' ;
+ 169   2          send[t++]=  'p' ;
+ 170   2          send[t++]=  'r' ;
+ 171   2          send[t++]= 'o' ;
+ 172   2          send[t++]=  'm' ;
+ 173   2          send[t++]= 'T' ;
+ 174   2          send[t++]=  'e' ;
+ 175   2          send[t++]=  's' ;
+ 176   2          send[t++]=  't' ;
+ 177   2          send[t++]=  ':' ;
+ 178   2          send[t++]=  '\r' ;
+C51 COMPILER V9.56.0.0   MAIN_FHQ                                                          07/10/2021 09:48:14 PAGE 4   
 
-                  send[t++]=  '\n' ;
-              
-                  send[t++]=  '[' ;
-                  send[t++]=  'T' ;
-                  send[t++]=  'i' ;
-                  send[t++]=  'm' ;
-                  send[t++]=  'e' ;
-                  send[t++]=  ':' ;
-                  send[t++]=  ( RunData.WorkTime_Second/10000+0x30 );
-                  send[t++]=  ( RunData.WorkTime_Second%10000/1000+0x30 );
-                  send[t++]=  ( RunData.WorkTime_Second%1000/100+0x30 );
-                  send[t++]=  ( RunData.WorkTime_Second%100/10+0x30 );
-                  send[t++]=  ( RunData.WorkTime_Second%10+0x30 );
-                  send[t++]=  ']' ;
-                  send[t++]=  '-' ;
-              
-                  send[t++]=  '[' ;
-                  send[t++]=  GetHex(RunData.FD_Count>>12);
-                  send[t++]=  GetHex((RunData.FD_Count>>8)&0x000f);
-                  send[t++]=  GetHex((RunData.FD_Count>>4)&0x000f);
-                  send[t++]=  GetHex(RunData.FD_Count&0x000f);
-                  send[t++]=   ']' ;
-                  send[t++]=  '-' ;
-              
-                      send[t++]=  '[' ;
-                  send[t++]=  GetHex( SetData.FH_Mode>>8 );
-                  send[t++]=  GetHex( SetData.FH_Mode&0x0f);
-                  send[t++]=  ']' ;
-                  send[t++]=  '-' ;
-                  
-                  send[t++]= '[' ;
-                  send[t++]= GetHex( SetData.SetTemp>>12);
-                  send[t++]= GetHex( (SetData.SetTemp>>8)&0x000f);
-                  send[t++]= GetHex( (SetData.SetTemp>>4)&0x000f );
-                  send[t++]= GetHex( SetData.SetTemp&0x000f);
-                  send[t++]=  ']' ;
-                  send[t++]=  '-' ;
-              
-                  send[t++]= '[' ;
-                  send[t++]= GetHex( SetData.SetHumidity>>8 );
-                  send[t++]= GetHex( SetData.SetHumidity&0x0f );
-                  send[t++]= ']' ;
-                  send[t++]=  '-' ;
-              
-              
-                  send[t++]=  '[' ;
-                  send[t++]=  ( MyEeprom.EepromTestWriteCount  /1000000+0x30 );
-                  send[t++]=  ( MyEeprom.EepromTestWriteCount %1000000/100000+0x30 );
-                  send[t++]=  ( MyEeprom.EepromTestWriteCount %100000/10000+0x30 );
-                  send[t++]=  ( MyEeprom.EepromTestWriteCount %10000/1000+0x30 );
-                  send[t++]=  ( MyEeprom.EepromTestWriteCount %1000/100+0x30 );
-                  send[t++]=  ( MyEeprom.EepromTestWriteCount %100/10+0x30 );
-                  send[t++]=  ( MyEeprom.EepromTestWriteCount %10+0x30 );
-                  send[t++]=  ']' ;
-                  
-              
-                  send[t++]= '\r' ;
-                  send[t++]=  '\n' ;
-                  send[t++]= '\r' ;
-                  send[t++]=  '\n' ;
-                  UartSendArray ( send, t );
-              
-C51 COMPILER V9.56.0.0   MAIN_FHQ                                                          07/09/2021 14:58:18 PAGE 5   
+ 179   2          send[t++]=  '\n' ;
+ 180   2      
+ 181   2          send[t++]=  '[' ;
+ 182   2          send[t++]=  'T' ;
+ 183   2          send[t++]=  'i' ;
+ 184   2          send[t++]=  'm' ;
+ 185   2          send[t++]=  'e' ;
+ 186   2          send[t++]=  ':' ;
+ 187   2          send[t++]=  ( RunData.WorkTime_Second/10000+0x30 );
+ 188   2          send[t++]=  ( RunData.WorkTime_Second%10000/1000+0x30 );
+ 189   2          send[t++]=  ( RunData.WorkTime_Second%1000/100+0x30 );
+ 190   2          send[t++]=  ( RunData.WorkTime_Second%100/10+0x30 );
+ 191   2          send[t++]=  ( RunData.WorkTime_Second%10+0x30 );
+ 192   2          send[t++]=  ']' ;
+ 193   2          send[t++]=  '-' ;
+ 194   2      
+ 195   2          send[t++]=  '[' ;
+ 196   2          send[t++]=  GetHex(RunData.FD_Count>>12);
+ 197   2          send[t++]=  GetHex((RunData.FD_Count>>8)&0x000f);
+ 198   2          send[t++]=  GetHex((RunData.FD_Count>>4)&0x000f);
+ 199   2          send[t++]=  GetHex(RunData.FD_Count&0x000f);
+ 200   2          send[t++]=   ']' ;
+ 201   2          send[t++]=  '-' ;
+ 202   2      
+ 203   2              send[t++]=  '[' ;
+ 204   2          send[t++]=  GetHex( SetData.FH_Mode>>8 );
+ 205   2          send[t++]=  GetHex( SetData.FH_Mode&0x0f);
+ 206   2          send[t++]=  ']' ;
+ 207   2          send[t++]=  '-' ;
+ 208   2          
+ 209   2          send[t++]= '[' ;
+ 210   2          send[t++]= GetHex( SetData.SetTemp>>12);
+ 211   2          send[t++]= GetHex( (SetData.SetTemp>>8)&0x000f);
+ 212   2          send[t++]= GetHex( (SetData.SetTemp>>4)&0x000f );
+ 213   2          send[t++]= GetHex( SetData.SetTemp&0x000f);
+ 214   2          send[t++]=  ']' ;
+ 215   2          send[t++]=  '-' ;
+ 216   2      
+ 217   2          send[t++]= '[' ;
+ 218   2          send[t++]= GetHex( SetData.SetHumidity>>8 );
+ 219   2          send[t++]= GetHex( SetData.SetHumidity&0x0f );
+ 220   2          send[t++]= ']' ;
+ 221   2          send[t++]=  '-' ;
+ 222   2      
+ 223   2      
+ 224   2      
+ 225   2          send[t++]=  '[' ;
+ 226   2          send[t++]=  ( MyEeprom.EepromTestWriteCount /10000000+0x30 );
+ 227   2          send[t++]=  ( MyEeprom.EepromTestWriteCount %10000000/1000000+0x30 );
+ 228   2          send[t++]=  ( MyEeprom.EepromTestWriteCount %1000000/100000+0x30 );
+ 229   2          send[t++]=  ( MyEeprom.EepromTestWriteCount %100000/10000+0x30 );
+ 230   2          send[t++]=  ( MyEeprom.EepromTestWriteCount %10000/1000+0x30 );
+ 231   2          send[t++]=  ( MyEeprom.EepromTestWriteCount %1000/100+0x30 );
+ 232   2          send[t++]=  ( MyEeprom.EepromTestWriteCount %100/10+0x30 );
+ 233   2          send[t++]=  ( MyEeprom.EepromTestWriteCount %10+0x30 );
+ 234   2          send[t++]=  ']' ;
+ 235   2          
+ 236   2      
+ 237   2          send[t++]= '\r' ;
+ 238   2          send[t++]=  '\n' ;
+ 239   2          send[t++]= '\r' ;
+ 240   2          send[t++]=  '\n' ;
+C51 COMPILER V9.56.0.0   MAIN_FHQ                                                          07/10/2021 09:48:14 PAGE 5   
 
-                  RunData.SendDataToUartCount=0;
-                }
-              
-                 #else
- 245   1          UartSendArray ( "---\r\n", 5 );
- 246   1         #endif
- 247   1      }
- 248          
- 249          
+ 241   2          UartSendArray ( send, t );
+ 242   2      
+ 243   2          RunData.SendDataToUartCount=0;
+ 244   2        }
+ 245   1      
+ 246   1         #else
+                  UartSendArray ( "---\r\n", 5 );
+                 #endif
+ 249   1      }
  250          
  251          
- 252          void main ()
- 253          {
- 254   1      
- 255   1        bsp_clock_init();  //快时钟系统主频为 14.7456M/2 = 7.3728M
- 256   1        ClearXRAM();
- 257   1        SystemInit();
- 258   1      
- 259   1      
- 260   1        P0OE|= ( 1<<7 );
- 261   1          P0_7=1;
- 262   1      
- 263   1        while ( 1 )
- 264   1        {
- 265   2        
- 266   2              if(RunData.WorkCount_60s%5==0)
- 267   2               P0_7=1;
- 268   2               else if(RunData.WorkCount_60s%7==0)
- 269   2               P0_7=0;
- 270   2               
- 271   2      #if TestEeprom==TRUE
-                      //EEPROM写入测试
-                  MyEepromTestHandle ((char*)(&RunData.WorkCount_10ms) ,'B' ); 
-                  //写入LED缓冲区显示查看
-                  SetLEDDisplay(); 
-              #endif    
- 277   2      
- 278   2          //数据发送到串口查看
- 279   2          SendToUart();
- 280   2      
- 281   2        }
- 282   1      }
- 283          
- 284          
+ 252          
+ 253          
+ 254          void main ()
+ 255          {
+ 256   1      
+ 257   1        bsp_clock_init();  //快时钟系统主频为 14.7456M/2 = 7.3728M
+ 258   1        ClearXRAM();
+ 259   1        SystemInit();
+ 260   1      
+ 261   1      
+ 262   1        P0OE|= ( 1<<7 );
+ 263   1          P0_7=1;
+ 264   1      
+ 265   1        while ( 1 )
+ 266   1        {
+ 267   2        
+ 268   2              if(RunData.WorkCount_60s%5==0)
+ 269   2               P0_7=1;
+ 270   2               else if(RunData.WorkCount_60s%7==0)
+ 271   2               P0_7=0;
+ 272   2               
+ 273   2      #if TestEeprom==TRUE
+ 274   2              //EEPROM写入测试
+ 275   2          MyEepromTestHandle ((char*)(&RunData.WorkCount_10ms) ,'B' ); 
+ 276   2          //写入LED缓冲区显示查看
+ 277   2          SetLEDDisplay(); 
+ 278   2      #endif    
+ 279   2      
+ 280   2          //数据发送到串口查看
+ 281   2          SendToUart();
+ 282   2      
+ 283   2        }
+ 284   1      }
  285          
  286          
  287          
  288          
- 289          void ISR_TIMER0() interrupt 1  //2ms
+ 289          
  290          
- 291          {
- 292   1      
- 293   1      
- 294   1        static unsigned char Count_10Ms;
+ 291          void ISR_TIMER0() interrupt 1  //2ms
+ 292          
+ 293          {
+ 294   1      
  295   1      
- 296   1        TH0 = 0xc6; // timer0 高字节数据
- 297   1        TL0 = 0x66+16;  // timer0 低字节数据
- 298   1      
- 299   1        CLR_WDT;
+ 296   1        static unsigned char Count_10Ms;
+ 297   1      
+ 298   1        TH0 = 0xc6; // timer0 高字节数据
+ 299   1        TL0 = 0x66+16;  // timer0 低字节数据
  300   1      
- 301   1        //Uart_SetTimeOut();
+ 301   1        CLR_WDT;
  302   1      
-C51 COMPILER V9.56.0.0   MAIN_FHQ                                                          07/09/2021 14:58:18 PAGE 6   
+C51 COMPILER V9.56.0.0   MAIN_FHQ                                                          07/10/2021 09:48:14 PAGE 6   
 
- 303   1        Count_10Ms++;
- 304   1        if ( Count_10Ms>=5 )
- 305   1        {
- 306   2          Count_10Ms=0;
- 307   2          RunData.WorkCount_10ms++;
- 308   2          RunData.WorkCount_1s++;
- 309   2          RunData.WorkTime_Second++;
- 310   2          if ( RunData.WorkCount_1s>=100 )
- 311   2          {
- 312   3            RunData.SendDataToUartCount++;
- 313   3            RunData.WorkCount_1s=0;
- 314   3            RunData.WorkCount_60s++;
- 315   3            //RunData.WorkTime_Second++;
- 316   3            if ( RunData.WorkCount_60s>=60 )
- 317   3            {
- 318   4              RunData.WorkCount_60s=0;
- 319   4            }
- 320   3          }
- 321   2      
- 322   2        }
- 323   1      
- 324   1      
- 325   1      }
- 326          
- 327          
+ 303   1        //Uart_SetTimeOut();
+ 304   1      
+ 305   1        Count_10Ms++;
+ 306   1        if ( Count_10Ms>=5 )
+ 307   1        {
+ 308   2          Count_10Ms=0;
+ 309   2          RunData.WorkCount_10ms++;
+ 310   2          RunData.WorkCount_1s++;
+ 311   2          RunData.WorkTime_Second++;
+ 312   2          if ( RunData.WorkCount_1s>=100 )
+ 313   2          {
+ 314   3            RunData.SendDataToUartCount++;
+ 315   3            RunData.WorkCount_1s=0;
+ 316   3            RunData.WorkCount_60s++;
+ 317   3            //RunData.WorkTime_Second++;
+ 318   3            if ( RunData.WorkCount_60s>=60 )
+ 319   3            {
+ 320   4              RunData.WorkCount_60s=0;
+ 321   4            }
+ 322   3          }
+ 323   2      
+ 324   2        }
+ 325   1      
+ 326   1      
+ 327   1      }
  328          
  329          
  330          
  331          
- 332          void Timer0_Init()
- 333          {
- 334   1      
- 335   1        TMOD = ( ( TMOD&~0X03 ) |T0_Mode1 ); //模式1 16位定时器/计数器(TMOD &~ TMOD_TMOD0_MASK)|1<<TMOD_TMOD0_POS
-             -;
+ 332          
+ 333          
+ 334          void Timer0_Init()
+ 335          {
  336   1      
- 337   1        TH0 = 0xc6;    // timer0 高字节数据
- 338   1        TL0 = 0x66;    // timer0 低字节数据
- 339   1        ET0 = 1;
- 340   1        TF0 = 0;
- 341   1        TR0 =1 ;
- 342   1      }
- 343          
- 344          
+ 337   1        TMOD = ( ( TMOD&~0X03 ) |T0_Mode1 ); //模式1 16位定时器/计数器(TMOD &~ TMOD_TMOD0_MASK)|1<<TMOD_TMOD0_POS
+             -;
+ 338   1      
+ 339   1        TH0 = 0xc6;    // timer0 高字节数据
+ 340   1        TL0 = 0x66;    // timer0 低字节数据
+ 341   1        ET0 = 1;
+ 342   1        TF0 = 0;
+ 343   1        TR0 =1 ;
+ 344   1      }
  345          
  346          
  347          
@@ -378,16 +378,18 @@ line level    source
  357          
  358          
  359          
+ 360          
+ 361          
 
+
+C51 COMPILER V9.56.0.0   MAIN_FHQ                                                          07/10/2021 09:48:14 PAGE 7   
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    256    ----
-C51 COMPILER V9.56.0.0   MAIN_FHQ                                                          07/09/2021 14:58:18 PAGE 7   
-
-   CONSTANT SIZE    =      6    ----
-   XDATA SIZE       =   ----    ----
+   CODE SIZE        =   1068    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----     100
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =      1       1
+   DATA SIZE        =      1       2
    IDATA SIZE       =   ----       2
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.

@@ -153,7 +153,7 @@ void SendToUart()
      每1S发送一次
      注意因为过快的写入和读取时间导致有些参数始终没有变化的问题
    ************************************************************/
-	if ( ( RunData.SendDataToUartCount >=1 )  ) 
+	if ( ( RunData.SendDataToUartCount >=1)  ) 
 	{
 
 		unsigned char xdata send[100];
@@ -221,8 +221,10 @@ void SendToUart()
 		send[t++]=  '-' ;
 
 
+
 		send[t++]=  '[' ;
-		send[t++]=  ( MyEeprom.EepromTestWriteCount  /1000000+0x30 );
+		send[t++]=  ( MyEeprom.EepromTestWriteCount /10000000+0x30 );
+		send[t++]=  ( MyEeprom.EepromTestWriteCount %10000000/1000000+0x30 );
 		send[t++]=  ( MyEeprom.EepromTestWriteCount %1000000/100000+0x30 );
 		send[t++]=  ( MyEeprom.EepromTestWriteCount %100000/10000+0x30 );
 		send[t++]=  ( MyEeprom.EepromTestWriteCount %10000/1000+0x30 );
