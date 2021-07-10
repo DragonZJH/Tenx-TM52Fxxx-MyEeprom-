@@ -37,6 +37,9 @@
 >* `3：`单个数据写调用-->MyEepromWrite ( unsigned int,unsigned char ,unsigned char )
 >>>>单个数据读调用-->MyEepromRead(unsigned char)<br>
 >>>>测试时接口--    >MyEepromTestHandle ( char* from,unsigned char flag )<br>
+
+`其他：` 暂时只测试了十速TM52FE8273芯片，根据数据手册其他TM52FEXX系列应该也是可以通用的<br>
+>>>移植到到其他只需需该修改部分代码，后续有时间继续更新<br>
  
  ___       
 `History     :` <br>
