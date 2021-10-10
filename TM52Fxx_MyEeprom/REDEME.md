@@ -25,7 +25,7 @@
 >>>>  `注意`枚举里的前后两个项不能更改<br>
 
 
->* `3：` 如果需要调试或其他测试，设置宏定义 TestEeprom  为TRUE <br> 
+>* `3：` 如果需要调试或其他测试，设置宏定义 TestEeprom和TestEeprom_  为TRUE <br> 
      
 ### 模块配置使用步骤----MyEeprom.c文件
 >* `1：` 在工程初始化调用函数-->MyEepromInit()<br>

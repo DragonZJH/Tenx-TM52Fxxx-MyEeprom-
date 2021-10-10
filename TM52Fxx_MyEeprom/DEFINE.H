@@ -4,6 +4,11 @@
 
 #define TRUE   1
 #define FALSE  0
+#define NULL   0
+#define LED_OFF    1
+#define LED_ON     0
+#define LED_Test    P0_7
+
 
 #define     nop		    _nop_();
 

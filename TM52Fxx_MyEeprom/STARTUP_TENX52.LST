@@ -1,4 +1,4 @@
-A51 MACRO ASSEMBLER  STARTUP_TENX52                                                       07/10/2021 20:04:06 PAGE     1
+A51 MACRO ASSEMBLER  STARTUP_TENX52                                                       10/10/2021 11:30:26 PAGE     1
 
 
 MACRO ASSEMBLER A51 V8.2.5.0
@@ -122,7 +122,7 @@ LOC  OBJ            LINE     SOURCE
 
                       57     ;
 
-A51 MACRO ASSEMBLER  STARTUP_TENX52                                                       07/10/2021 20:04:06 PAGE     2
+A51 MACRO ASSEMBLER  STARTUP_TENX52                                                       10/10/2021 11:30:26 PAGE     2
 
                       58     ; <o> PDATALEN: PDATA memory size <0x0-0xFF> 
 
@@ -256,7 +256,7 @@ LOC  OBJ            LINE     SOURCE
 
   00F0               123     B       DATA    0F0H
 
-A51 MACRO ASSEMBLER  STARTUP_TENX52                                                       07/10/2021 20:04:06 PAGE     3
+A51 MACRO ASSEMBLER  STARTUP_TENX52                                                       10/10/2021 11:30:26 PAGE     3
 
   0081               124     SP      DATA    81H
 
@@ -390,7 +390,7 @@ LOC  OBJ            LINE     SOURCE
 
                                              DJNZ    R7,PDATALOOP
 
-A51 MACRO ASSEMBLER  STARTUP_TENX52                                                       07/10/2021 20:04:06 PAGE     4
+A51 MACRO ASSEMBLER  STARTUP_TENX52                                                       10/10/2021 11:30:26 PAGE     4
 
                              ENDIF
 
@@ -460,7 +460,7 @@ LOC  OBJ            LINE     SOURCE
 
                      223                     END
 
-A51 MACRO ASSEMBLER  STARTUP_TENX52                                                       07/10/2021 20:04:06 PAGE     5
+A51 MACRO ASSEMBLER  STARTUP_TENX52                                                       10/10/2021 11:30:26 PAGE     5
 
 SYMBOL TABLE LISTING
 ------ ----- -------

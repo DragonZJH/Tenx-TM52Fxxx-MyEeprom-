@@ -1,0 +1,9 @@
+01. PROT (1:7)	Disable
+02. XRSTE (1:6)	Disable
+03. LVR (1:5~3)	LV Reset 2.4V
+04. PREAD (1:2)	Enable
+05. MVCLOCK (1:1)	MOVC Unlock
+06. FRCPSC (1:0)	FRC/1
+07. IAP data reserve range (2:3~0)	No reserve range
+08. ICE Mode(2:4)	4-Wire
+09. On Chip CRC16(2:5)	Disable

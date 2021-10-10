@@ -31,17 +31,16 @@
 
 
 #include "MyEeprom.h"
+#include "TM52f82XX_Eeprom.h"
 #include "LED.h"
 
 
 
-void MyEepromSaveAllDataUserHandle ( unsigned char writeOnWhichArea );
+
+static void MyEepromSaveAllDataUserHandle ( unsigned char writeOnWhichArea );
+
 
 volatile struct eepromUser xdata  MyEeprom;
-
-static xdata enum  userSet  setD,setE,setF,setG,setH;
-volatile unsigned char xdata EepromAddress[ChipEepromRamCP] _at_ EepromStartAddr;
-
 
 
 
@@ -63,21 +62,8 @@ volatile unsigned char xdata EepromAddress[ChipEepromRamCP] _at_ EepromStartAddr
 
 void MyEepromInit()
 {
-   //为了防止程序跑飞提高稳定性，可以在工作期间多次初始化
-    MyEeprom.EepromOnRamAddress=EepromAddress;
-	MyEeprom.SaveAllDataOnUserHandle= ( eepromSaveData* ) MyEepromSaveAllDataUserHandle;
 
-	setD=EepromMaxAreaCount_;
-	MyEeprom.EepromMaxAreaCount=setD;
-	setE=EepromStrogeValue_;
-	MyEeprom.EepromStrogeValue=setE;
-	setF=EepromMaxArea_;
-	MyEeprom.EepromMaxArea=setF;
-	setG=EepromLastArea_;
-	MyEeprom.EepromLastArea=setG;
-	setH=OutOfTheArea_;
-	MyEeprom.OutOfTheArea=setH;
-	
+	MyEeprom.SaveAllDataOnUserHandle= ( eepromSaveData* ) MyEepromSaveAllDataUserHandle;
 	EepromSetup ( &MyEeprom );
 }
 
@@ -103,9 +89,11 @@ void MyEepromInit()
 *****************************************************************************/
 void MyEepromWrite ( unsigned int  addr,unsigned char dat,unsigned char isSaveAll )
 {
-    MyEepromInit();
+
 	EepromWrite (  addr, dat,  isSaveAll );
 }
+
+
 
 
 
@@ -138,12 +126,12 @@ void MyEepromTestHandle ( char* from,unsigned char flag )
 #if TestEeprom==TRUE
             area=0xff;
 			
-			for ( t=0; t<MyEeprom.EepromMaxArea; t++ )
+			for ( t=0; t<EepromMaxArea; t++ )
 			{
 			    //直接根据所在区域和地址读取相应的数据
 				MyEeprom.EepromTestArea[t]=EepromReadWithArea ( AreaAddr,t );
 				if(area==0xff){
-                   if ( MyEeprom.EepromTestArea[t]<MyEeprom.EepromMaxAreaCount )
+                   if ( MyEeprom.EepromTestArea[t]<EepromMaxAreaCount )
 				  {
 					area=t;
 				  }
@@ -222,8 +210,6 @@ void MyEepromTestHandle ( char* from,unsigned char flag )
 
 
 
-
-
 /*****************************************************************************
  Prototype    : MyEepromSaveAllDataUserHandle
  Description  : 用户接口,程序自动选择的当前区域中保存用户的所有的数据
@@ -280,37 +266,37 @@ static void MyEepromSaveAllDataUserHandle ( unsigned char writeOnWhichArea )
 
 	CLR_WDT;
 	/*****************************用户必须添加段，必须加入所有需要保存的数据*************************/
-	EepromWriteByte ( MyEeprom.EepromStrogeValue*2* writeOnWhichArea +FH_ModeAddr*2, SetData.FH_Mode );
+	EepromWriteByte ( EepromStrogeValue*2* writeOnWhichArea +FH_ModeAddr*2, SetData.FH_Mode );
 	//写入设置温度
-	EepromWriteByte ( MyEeprom.EepromStrogeValue*2* writeOnWhichArea +SetTempAddr_L*2,SetData.SetTemp );
-	EepromWriteByte ( MyEeprom.EepromStrogeValue* 2* writeOnWhichArea +SetTempAddr_H*2, SetData.SetTemp >> 8 );
+	EepromWriteByte ( EepromStrogeValue*2* writeOnWhichArea +SetTempAddr_L*2,SetData.SetTemp );
+	EepromWriteByte ( EepromStrogeValue* 2* writeOnWhichArea +SetTempAddr_H*2, SetData.SetTemp >> 8 );
 
-	EepromWriteByte ( MyEeprom.EepromStrogeValue* 2* writeOnWhichArea + SetHumidityAddr*2, SetData.SetHumidity );
-	EepromWriteByte ( MyEeprom.EepromStrogeValue* 2* writeOnWhichArea +FD_TimeAddr*2, SetData.FD_Time );
+	EepromWriteByte ( EepromStrogeValue* 2* writeOnWhichArea + SetHumidityAddr*2, SetData.SetHumidity );
+	EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +FD_TimeAddr*2, SetData.FD_Time );
 
 	CLR_WDT;
-	EepromWriteByte (  MyEeprom.EepromStrogeValue* 2* writeOnWhichArea +SystemStartFlagAddr*2, ( unsigned char ) SystemStart_Flag );
-	EepromWriteByte (  MyEeprom.EepromStrogeValue* 2* writeOnWhichArea +WorkTimeAddr_L*2, RunData.WorkTime_Second & 0x00ff );
-	EepromWriteByte (  MyEeprom.EepromStrogeValue* 2* writeOnWhichArea +WorkTimeAddr_H*2, RunData.WorkTime_Second >> 8 );
-	EepromWriteByte (  MyEeprom.EepromStrogeValue* 2* writeOnWhichArea +FD_CountAdd_L*2, RunData.FD_Count & 0x00ff );
-	EepromWriteByte (  MyEeprom.EepromStrogeValue* 2* writeOnWhichArea +FD_CountAdd_H*2, RunData.FD_Count >> 8 );
+	EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +SystemStartFlagAddr*2, ( unsigned char ) SystemStart_Flag );
+	EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +WorkTimeAddr_L*2, RunData.WorkTime_Second & 0x00ff );
+	EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +WorkTimeAddr_H*2, RunData.WorkTime_Second >> 8 );
+	EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +FD_CountAdd_L*2, RunData.FD_Count & 0x00ff );
+	EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +FD_CountAdd_H*2, RunData.FD_Count >> 8 );
 #if TestEeprom==TRUE //测试用
 	{
 		//测试时这几个地址更改为保存总写入次数 ,也可以自定义其他地址
 		//MyEeprom.EepromTestWriteCount=162000;
-		EepromWriteByte (  MyEeprom.EepromStrogeValue* 2* writeOnWhichArea +CS_CountAddr_L*2,  MyEeprom.EepromTestWriteCount & 0x000000ff );
-		EepromWriteByte (  MyEeprom.EepromStrogeValue* 2* writeOnWhichArea +CS_CountAddr_H*2, ( MyEeprom.EepromTestWriteCount>>8 ) & 0x000000ff );
+		EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +CS_CountAddr_L*2,  MyEeprom.EepromTestWriteCount & 0x000000ff );
+		EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +CS_CountAddr_H*2, ( MyEeprom.EepromTestWriteCount>>8 ) & 0x000000ff );
 		CLR_WDT;
-		EepromWriteByte (  MyEeprom.EepromStrogeValue* 2* writeOnWhichArea +SetStableDukAddr_L*2, ( MyEeprom.EepromTestWriteCount>>16 ) & 0x000000ff );
-		EepromWriteByte (  MyEeprom.EepromStrogeValue* 2* writeOnWhichArea +SetStableDukAddr_H*2, ( MyEeprom.EepromTestWriteCount>>24 ) );
+		EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +SetStableDukAddr_L*2, ( MyEeprom.EepromTestWriteCount>>16 ) & 0x000000ff );
+		EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +SetStableDukAddr_H*2, ( MyEeprom.EepromTestWriteCount>>24 ) );
 	}
 #else
 
-	EepromWriteByte (  MyEeprom.EepromStrogeValue* 2* writeOnWhichArea +CS_CountAddr_L*2, RunData.CS_Count & 0x00ff );
-	EepromWriteByte (  MyEeprom.EepromStrogeValue* 2* writeOnWhichArea +CS_CountAddr_H*2, RunData.CS_Count >> 8 );
+	EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +CS_CountAddr_L*2, RunData.CS_Count & 0x00ff );
+	EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +CS_CountAddr_H*2, RunData.CS_Count >> 8 );
 	CLR_WDT;
-	EepromWriteByte (  MyEeprom.EepromStrogeValue* 2* writeOnWhichArea +SetStableDukAddr_L*2, RunData.DukBuf_H & 0x00ff );
-	EepromWriteByte (  MyEeprom.EepromStrogeValue* 2* writeOnWhichArea +SetStableDukAddr_H*2, RunData.DukBuf_H >> 8 );
+	EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +SetStableDukAddr_L*2, RunData.DukBuf_H & 0x00ff );
+	EepromWriteByte (  EepromStrogeValue* 2* writeOnWhichArea +SetStableDukAddr_H*2, RunData.DukBuf_H >> 8 );
 #endif
 	/*********************************END********************************************/
 
@@ -334,32 +320,30 @@ static void MyEepromSaveAllDataUserHandle ( unsigned char writeOnWhichArea )
 
 
 
-
-
-
-
-
-
 /*****************************************************************************
  Prototype    : MyEepromRead
  Description  : 根据地址读取单个数据 用户调用
- Input        : unsigned char addr  
+ Input        : unsigned char addr
  Output       : None
  Return Value : unsigned
- Calls        : 
- Called By    : 
- 
+ Calls        :
+ Called By    :
+
   History        :
   1.Date         : 2021/7/6
     Author       : Dragon8814
     Modification : Created function
 
 *****************************************************************************/
-unsigned char MyEepromRead(unsigned char addr)
+unsigned char MyEepromRead ( unsigned char addr )
 {
-    MyEepromInit();
-   return EepromRead ( addr );
+
+	return EepromRead ( addr );
 }
+
+
+
+
 
 
 /*****************************************************************************
@@ -404,6 +388,7 @@ void ReadSameDataFromEeprom()
 
 
 }
+
 
 
 

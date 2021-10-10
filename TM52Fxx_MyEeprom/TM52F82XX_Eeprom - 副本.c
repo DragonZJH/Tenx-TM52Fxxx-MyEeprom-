@@ -29,25 +29,11 @@
 
 #include "TM52F82XX_Eeprom.h"
 
-
 static void  EepromSaveAllData ( unsigned char writeOnWhichArea,unsigned char saveAllOnThisArea );
 
+volatile unsigned char xdata EepromAddress[ChipEepromRamCP] _at_ EepromStartAddr;
 
-
-volatile struct eepromUser* xdata  EepromUser;
-
-static void Delay700us()		//@7.3728MHz
-{
-	unsigned char i, j;
-
-	i = 6;
-	j = 1;
-	do
-	{
-		while (--j);
-	} while (--i);
-}
-
+volatile struct eepromUser*   EepromUser;
 
 /*****************************************************************************
  Prototype    : EepromSetup
@@ -67,7 +53,7 @@ static void Delay700us()		//@7.3728MHz
 void  EepromSetup ( struct eepromUser* ee )
 {
 
-
+	ee->EepromOnRamAddress=EepromAddress;
 	EepromUser=ee;
 
 }
@@ -142,22 +128,22 @@ void FindOnWhichArea ( struct findOnArea* foa )
 	**********(EepromStrogeValue*2*OnArea_N)+(addr*2)**************
 	如存放在区域1中FD_TimeAddr的地址：(15*2*1)+(2*2)=34
 	**************************************************************/
-#if TestEeprom_==TRUE
+#if TestEeprom==TRUE
 	RWEepromStart();
-	for ( area=0; area<EepromUser->EepromMaxArea; area++ )
+	for ( area=0; area<EepromMaxArea; area++ )
 	{
-		dat=* ( EepromUser->EepromOnRamAddress + (EepromUser->EepromStrogeValue*2*area ) ); //区域所在地址
+		dat=* ( &EepromAddress+ ( EepromStrogeValue*2*area ) ); //区域所在地址
 		EepromUser->EepromTestArea[area]=dat;
 	}
 	RWEepromEnd();
 #endif
 	RWEepromStart();
-	for ( area=0; area<EepromUser->EepromMaxArea; area++ )
+	for ( area=0; area<EepromMaxArea; area++ )
 	{
 		//dat=* ( &EepromAddress+ ((EepromStrogeValue*2*area)+(AreaAddr*2)) );
-		dat=* ( EepromUser->EepromOnRamAddress + ( EepromUser->EepromStrogeValue*2*area ) ); //区域所在地址
+		dat=* ( &EepromAddress+ ( EepromStrogeValue*2*area ) ); //区域所在地址
 
-		if ( dat<EepromUser->EepromMaxAreaCount ) //任何一个区域的最大写入次数每超 返回数据
+		if ( dat<EepromMaxAreaCount ) //任何一个区域的最大写入次数每超 返回数据
 		{
 			foa->whichhArea=area;
 			foa->AreaCount=dat;
@@ -169,7 +155,7 @@ void FindOnWhichArea ( struct findOnArea* foa )
 
 	//出错，超出最大区域
 	{
-		foa->whichhArea= EepromUser->OutOfTheArea;
+		foa->whichhArea= OutOfTheArea;
 		return ;
 	}
 
@@ -195,7 +181,7 @@ unsigned char EepromRead ( unsigned int addr )
 	unsigned char  dat=0;
 	struct findOnArea fOA;
 	FindOnWhichArea ( &fOA );
-	if ( fOA.whichhArea ==EepromUser->OutOfTheArea )
+	if ( fOA.whichhArea ==OutOfTheArea )
 	{
 		//所有区域都超过最大写入次数 出错
 		//只会出现在芯片第一次运行的时候，因为那时候的EEPROM数据时不确定的
@@ -205,9 +191,9 @@ unsigned char EepromRead ( unsigned int addr )
 
 	}
 
-	
-	dat=* ( EepromUser->EepromOnRamAddress + ( EepromUser->EepromStrogeValue*2* fOA.whichhArea )+ ( addr*2 ) ) ;
-
+	RWEepromStart();
+	dat=* ( &EepromAddress+ ( EepromStrogeValue*2* fOA.whichhArea )+ ( addr*2 ) ) ;
+	RWEepromEnd();
 	return dat;
 }
 
@@ -230,9 +216,9 @@ unsigned char EepromRead ( unsigned int addr )
 unsigned char EepromReadWithArea ( unsigned int addr,unsigned char area )
 {
     unsigned char dat;
-	
-	dat=* ( (EepromUser->EepromOnRamAddress) + ( EepromUser->EepromStrogeValue*2* area )+ ( addr*2 ) ) ;
-	
+	RWEepromStart();
+	dat=* ( &EepromAddress+ ( EepromStrogeValue*2* area )+ ( addr*2 ) ) ;
+	RWEepromEnd();
 	return dat;
 }
 
@@ -256,21 +242,20 @@ unsigned char EepromReadWithArea ( unsigned int addr,unsigned char area )
     Modification : Created function
 
 *****************************************************************************/
-
-void EepromWriteByte ( unsigned int  addr,unsigned char  dat )
+void EepromWriteByte ( unsigned int addr,unsigned char dat )
 {
 	unsigned char edat = 0;
 
-#if TestEeprom_!=TRUE  //测试时全写
-	edat=* (EepromUser->EepromOnRamAddress +addr );
-	//edat=EepromAddress[addr];
+#if TestEeprom!=TRUE  //测试时全写
+	RWEepromStart();
+	edat=* ( &EepromAddress+addr );
+	RWEepromEnd();
 	if ( edat!=dat )
 #endif
 	{
-	
 		RWEepromStart();
-		*(EepromUser->EepromOnRamAddress+addr)=dat;
-		RWEepromEnd();	
+		* ( &EepromAddress+addr ) =dat;
+		RWEepromEnd();
 	}
 
 }
@@ -298,14 +283,14 @@ static void  EepromSaveAllData ( unsigned char writeOnWhichArea,unsigned char is
 	if ( isSaveAllOnThisArea!=TRUE )
 	{
 
-		EepromWriteByte ( EepromUser->EepromStrogeValue*2*writeOnWhichArea,1 ); //当前区写入次数更改为1
+		EepromWriteByte ( EepromStrogeValue*2*writeOnWhichArea,1 ); //当前区写入次数更改为1
 
 		//上一区写入次数标志为写满 =EepromMaxAreaCount
 		//如果当前区域是第一区0，则上一区为EepromLastArea最后区域
-		EepromWriteByte ( EepromUser->EepromStrogeValue*2* ( writeOnWhichArea!=0?writeOnWhichArea-1:EepromUser->EepromLastArea ), EepromUser->EepromMaxAreaCount );
-#if TestEeprom_==TRUE
+		EepromWriteByte ( EepromStrogeValue*2* ( writeOnWhichArea!=0?writeOnWhichArea-1:EepromLastArea ), EepromMaxAreaCount );
+#if TestEeprom==TRUE
 		EepromUser->EepromTestArea[writeOnWhichArea]=1;
-		EepromUser->EepromTestArea[writeOnWhichArea!=0?writeOnWhichArea-1:EepromUser->EepromLastArea]=EepromUser->EepromMaxAreaCount;
+		EepromUser->EepromTestArea[writeOnWhichArea!=0?writeOnWhichArea-1:EepromLastArea]=EepromMaxAreaCount;
 #endif
 	}
 	EepromUser->SaveAllDataOnUserHandle ( writeOnWhichArea );
@@ -336,11 +321,11 @@ void EepromWrite ( unsigned int  addr,unsigned char dat,unsigned char isSaveAll 
 	unsigned char isN;
 
 	FindOnWhichArea ( &fOA );
-	if ( fOA.whichhArea<EepromUser->EepromMaxArea )
+	if ( fOA.whichhArea<EepromMaxArea )
 	{
-		if ( fOA.AreaCount>EepromUser->EepromMaxAreaCount-2 )
+		if ( fOA.AreaCount>EepromMaxAreaCount-2 )
 		{
-			if ( fOA.whichhArea==EepromUser->EepromLastArea ) //最后一个区域已经写满次数了，则转到第一个区域
+			if ( fOA.whichhArea==EepromLastArea ) //最后一个区域已经写满次数了，则转到第一个区域
 			{
 				fOA.whichhArea=0;
 			}
@@ -365,14 +350,14 @@ void EepromWrite ( unsigned int  addr,unsigned char dat,unsigned char isSaveAll 
 	if ( isN==TRUE )  //当前的区域写入新数据条件不满足，需要一并更新所有数据
 	{
 		
-#if TestEeprom_==TRUE
+#if TestEeprom==TRUE
 		EepromUser->EepromTestWriteCount++;
 #endif
          EepromSaveAllData ( fOA.whichhArea,FALSE );
 	}
 	else
 	{
-#if TestEeprom_==TRUE
+#if TestEeprom==TRUE
 		EepromUser->EepromTestWriteCount++;
 #endif	
 	  //写在当前区域
@@ -382,8 +367,7 @@ void EepromWrite ( unsigned int  addr,unsigned char dat,unsigned char isSaveAll 
 		 *  如存放在区域1中FD_TimeAddr的地址：(15*2*1)+(2*2)=34              *
 		 *  芯片Eeprom起始地址已经增加在写数据函数                                *
 		 **********************************************************/
-		
-		EepromWriteByte ( EepromUser->EepromStrogeValue*2*fOA.whichhArea+0*2,++fOA.AreaCount ); //在所在区域写入增加次数
+		EepromWriteByte ( EepromStrogeValue*2*fOA.whichhArea+AreaAddr*2,++fOA.AreaCount ); //在所在区域写入增加次数
 
 		if ( isSaveAll ) //在当前区更新所有数据
 		{
@@ -394,16 +378,13 @@ void EepromWrite ( unsigned int  addr,unsigned char dat,unsigned char isSaveAll 
 		//在当前区更新个别数据
 		else
 		{
-             
-			EepromWriteByte ( EepromUser->EepromStrogeValue*2*fOA.whichhArea+addr*2,dat );
+			EepromWriteByte ( EepromStrogeValue*2*fOA.whichhArea+addr*2,dat );
 		}
 
 
 	}
 
 }
-
-
 
 
 

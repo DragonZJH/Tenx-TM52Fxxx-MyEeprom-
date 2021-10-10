@@ -15,7 +15,7 @@
  次数已经超过18万次多，数据没有发现异常.
 
  模块配置使用步骤----MyEeprom.h头文件
-     1：根据提示修改以下宏定义
+     1：根据提示修改以下宏定义     
         #define ChipEepromRamCP  256	   //芯片EepromRam的容量大小
         #define EepromStartAddr  0XEE00	  //这个芯片EEPROM物理内存中起始地址
         #define TM52FE8276_TotalEeprom  128  //这个芯片总共可以使用的EEPROM字节，TM52f82xx芯片偶地址有效
@@ -23,8 +23,8 @@
      2：在枚举项@AllEepromAddr加入你需要保存数据的地址名称
         注意枚举中前后两个项不能更改
 
-     3：如果需要调试或其他测试，设置宏定义 TestEeprom  为TRUE
-
+     3：如果需要调试或其他测试，设置宏定义 TestEeprom  为TRUE  
+     
  模块配置使用步骤----MyEeprom.c文件
      1：在工程初始化调用函数 MyEepromInit()
 
@@ -40,8 +40,8 @@
        移植到到其他只需需该修改部分代码，后续有时间继续更新
 
  感兴趣的朋友可以关注我github中的此开源项目提供宝贵意见
- 仓库地址：https://github.com/DragonZJH/Tenx-TM52Fxxx-MyEeprom-
-
+ 仓库地址：https://github.com/DragonZJH/Tenx-TM52Fxxx-MyEeprom-      
+ 
 ******************************************************************************
 
 ******************************************************************************/
@@ -95,12 +95,12 @@ void SystemInit()
 	UartInit();
 	Timer0_Init();
 
-#if TestEeprom==TRUE
-	MyEeprom.EepromTestWriteCount=0;
-#endif
+	#if TestEeprom==TRUE
+  MyEeprom.EepromTestWriteCount=0;
+		#endif
 	ReadSameDataFromEeprom();
 
-
+	
 	WDTPSC0;//WDT 480MS
 	WDT_RUN_FAST_DIS_ILDE;
 
@@ -124,7 +124,7 @@ void ClearXRAM ( void )
 void SetLEDDisplay()
 {
 
-	//eeprom测试用
+    //eeprom测试用
 	if ( RunData.WorkCount_60s<20 )
 	{
 		MyEepromTestHandle  ( ( char* ) LEDShow,'C' ); //LED显示相应区域
@@ -138,21 +138,15 @@ void SetLEDDisplay()
 #endif
 
 #if TestEeprom
-unsigned char GetHex ( unsigned char dat )
+unsigned char GetHex(unsigned char dat )
 {
-	if ( dat==0 )
-	{
-		return 0x30;
-	}
-	if ( dat<10 )
-	{
-		return dat+0x30;
-	}
-	else
-	{
-		return dat+0x37;
-	}
-
+  if(dat==0)
+    return 0x30;
+ if(dat<10)
+    return dat+0x30;
+  else
+    return dat+0x37;
+    
 }
 
 #endif
@@ -161,18 +155,18 @@ unsigned char GetHex ( unsigned char dat )
 void SendToUart()
 {
 
-	/***********************************************************
-	  每1S发送一次
-	  注意因为过快的写入和读取时间导致有些参数始终没有变化的问题
-	************************************************************/
-	if ( ( RunData.SendDataToUartCount >=1 )  )
+   /***********************************************************
+     每1S发送一次
+     注意因为过快的写入和读取时间导致有些参数始终没有变化的问题
+   ************************************************************/
+	if ( ( RunData.SendDataToUartCount >=1)  ) 
 	{
-#if TestEeprom==TRUE
-		/***串口打印格式：
-		  MyEepromTest:
-		  [Time:62501]-[D35C]-[09]-[0000]-[0C]-[00201316]
-		    时间秒       - 参数1.2.3.4......       -总擦写次数
-		***/
+          #if TestEeprom==TRUE
+        /***串口打印格式：
+          MyEepromTest:
+          [Time:62501]-[D35C]-[09]-[0000]-[0C]-[00201316]
+            时间秒       - 参数1.2.3.4......       -总擦写次数
+        ***/
 		unsigned char xdata send[100];
 		unsigned char  t=0;
 		MyEepromTestHandle ( FALSE,'A' );
@@ -210,30 +204,30 @@ void SendToUart()
 		send[t++]=  '-' ;
 
 		send[t++]=  '[' ;
-		send[t++]=  GetHex ( RunData.FD_Count>>12 );
-		send[t++]=  GetHex ( ( RunData.FD_Count>>8 ) &0x000f );
-		send[t++]=  GetHex ( ( RunData.FD_Count>>4 ) &0x000f );
-		send[t++]=  GetHex ( RunData.FD_Count&0x000f );
+		send[t++]=  GetHex(RunData.FD_Count>>12);
+		send[t++]=  GetHex((RunData.FD_Count>>8)&0x000f);
+		send[t++]=  GetHex((RunData.FD_Count>>4)&0x000f);
+		send[t++]=  GetHex(RunData.FD_Count&0x000f);
 		send[t++]=   ']' ;
 		send[t++]=  '-' ;
 
-		send[t++]=  '[' ;
-		send[t++]=  GetHex ( SetData.FH_Mode>>8 );
-		send[t++]=  GetHex ( SetData.FH_Mode&0x0f );
+        send[t++]=  '[' ;
+		send[t++]=  GetHex( SetData.FH_Mode>>8 );
+		send[t++]=  GetHex( SetData.FH_Mode&0x0f);
+		send[t++]=  ']' ;
+		send[t++]=  '-' ;
+		
+		send[t++]= '[' ;
+		send[t++]= GetHex( SetData.SetTemp>>12);
+		send[t++]= GetHex( (SetData.SetTemp>>8)&0x000f);
+		send[t++]= GetHex( (SetData.SetTemp>>4)&0x000f );
+		send[t++]= GetHex( SetData.SetTemp&0x000f);
 		send[t++]=  ']' ;
 		send[t++]=  '-' ;
 
 		send[t++]= '[' ;
-		send[t++]= GetHex ( SetData.SetTemp>>12 );
-		send[t++]= GetHex ( ( SetData.SetTemp>>8 ) &0x000f );
-		send[t++]= GetHex ( ( SetData.SetTemp>>4 ) &0x000f );
-		send[t++]= GetHex ( SetData.SetTemp&0x000f );
-		send[t++]=  ']' ;
-		send[t++]=  '-' ;
-
-		send[t++]= '[' ;
-		send[t++]= GetHex ( SetData.SetHumidity>>8 );
-		send[t++]= GetHex ( SetData.SetHumidity&0x0f );
+		send[t++]= GetHex( SetData.SetHumidity>>8 );
+		send[t++]= GetHex( SetData.SetHumidity&0x0f );
 		send[t++]= ']' ;
 		send[t++]=  '-' ;
 
@@ -249,7 +243,7 @@ void SendToUart()
 		send[t++]=  ( MyEeprom.EepromTestWriteCount %100/10+0x30 );
 		send[t++]=  ( MyEeprom.EepromTestWriteCount %10+0x30 );
 		send[t++]=  ']' ;
-
+		
 
 		send[t++]= '\r' ;
 		send[t++]=  '\n' ;
@@ -257,14 +251,14 @@ void SendToUart()
 		send[t++]=  '\n' ;
 		UartSendArray ( send, t );
 #else
-		//测试未开启
-		UartSendArray ( "TestEeprom is set to FALSE\r\n", sizeof ( "TestEeprom is set to FALSE\r\n" ) );
+       //测试未开启
+       UartSendArray ( "TestEeprom is set to FALSE\r\n", sizeof("TestEeprom is set to FALSE\r\n") );
 #endif
 
 		RunData.SendDataToUartCount=0;
 	}
 
-
+ 
 }
 
 
@@ -279,27 +273,23 @@ void main ()
 
 
 	P0OE|= ( 1<<7 );
-	LED_Test=LED_OFF;
+    P0_7=1;
 
 	while ( 1 )
 	{
 
-		{   //P07接LED 上电LED小于6秒灭系统故障
-			if ( RunData.WorkCount_60s%5==0 )
-			{
-				LED_Test=LED_ON;
-			}
-			else if ( RunData.WorkCount_60s%7==0 )
-			{
-				LED_Test=LED_OFF;
-			}
-		}
+	    {
+        if(RunData.WorkCount_60s%5==0)
+         P0_7=1;
+         else if(RunData.WorkCount_60s%7==0)
+         P0_7=0;
+        }
 #if TestEeprom==TRUE
-		//EEPROM写入测试
-		MyEepromTestHandle ( ( char* ) ( &RunData.WorkCount_10ms ),'B' );
+        //EEPROM写入测试
+		MyEepromTestHandle ((char*)(&RunData.WorkCount_10ms) ,'B' ); 
 		//写入LED缓冲区显示查看
-		SetLEDDisplay();
-#endif
+		SetLEDDisplay(); 
+#endif		
 
 		//数据发送到串口查看
 		SendToUart();

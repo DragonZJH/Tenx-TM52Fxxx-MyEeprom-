@@ -12,14 +12,14 @@
       <ToolsetName>MCS-51</ToolsetName>
       <TargetOption>
         <TargetCommonOption>
-          <Device>TM52FE8273B</Device>
+          <Device>TM52FE8276</Device>
           <Vendor>tenx</Vendor>
           <Cpu>IRAM(0-0xFF) CLOCK(16000000) XRAM(0xFD00-0xFFFF)</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile>"LIB\STARTUP_TENX52.A51"("tenx 8051 Startup Code")</StartupFile>
           <FlashDriverDll></FlashDriverDll>
           <DeviceId>0</DeviceId>
-          <RegisterFile>REGtenxTM52FE8273B.H</RegisterFile>
+          <RegisterFile>REGtenxTM52FE8276.H</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -176,7 +176,7 @@
           </Flash1>
           <bUseTDR>0</bUseTDR>
           <Flash2>D:\Keil_v5\SampTarg.DLL</Flash2>
-          <Flash3>"" ()</Flash3>
+          <Flash3></Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>

@@ -24,7 +24,7 @@
      2：在枚举项@AllEepromAddr加入你需要保存数据的地址名称
         注意枚举里的前后两个项不能更改
 
-     3：如果需要调试或其他测试，设置宏定义 TestEeprom和TestEeprom_  为TRUE  
+     3：如果需要调试或其他测试，设置宏定义 TestEeprom  为TRUE  
      
  模块配置使用步骤----MyEeprom.c文件
      1：在工程初始化调用函数-->MyEepromInit()
@@ -61,21 +61,19 @@
 
 #ifndef _MYEEPROM__H__
 #define _MYEEPROM__H__
+#include "Config.h"
 #include "REGtenxTM52FE8276.h"
-#include "TM52f82XX_Eeprom.h"
-#include	<intrins.h>
-
-
+//#include "tm52fe8276_bsp.h"
+#include "Delay.h"
 
 
 
 //需要用户定义修改
 #define ChipEepromRamCP  256      //芯片EepromRam的容量大小
-#define EepromStartAddr 0XEE00      //这个芯片EEPROM物理内存中起始地址
-#define TM52FE8276_TotalEeprom 128  //这个芯片总共可以使用的EEPROM字节，TM52f82xx芯片偶地址有效
+#define EepromStartAddr  0XEE00      //这个芯片EEPROM物理内存中起始地址
+#define TM52FE8276_TotalEeprom  128  //这个芯片总共可以使用的EEPROM字节，TM52f82xx芯片偶地址有效
 
 //用户初期调试测试查看数据用   //测试Eeprom时置TRUE --- 后期设为FALSE即可
-//注意TM52F82XX_Eeprom.h文件中的TestEeprom_ 也需要相应设置
 #define TestEeprom  TRUE           
 
 
@@ -111,15 +109,16 @@ enum AllEepromAddr  {
 };
 
 
-enum  userSet{
+
 
 //一般用户不用修改
- EepromMaxAreaCount_   = 100 ,//每个区最大写入数据次数
- EepromStrogeValue_   = LastItemAddr, // Eeprom 128字节中每组数据个数 
- EepromMaxArea_        = (unsigned char)(TM52FE8276_TotalEeprom/(EepromStrogeValue_*2)),// Eeprom 128字节最大分组数 128/15*2 =4
- EepromLastArea_      =  (EepromMaxArea_-1), //Eeprom最后一个分区
- OutOfTheArea_       = (EepromMaxArea_+2) //超出写区域范围 
-};
+#define EepromMaxAreaCount    100 //每个区最大写入数据次数
+#define EepromStrogeValue    LastItemAddr // Eeprom 128字节中每组数据个数 
+#define EepromMaxArea         (unsigned char)(TM52FE8276_TotalEeprom/(EepromStrogeValue*2))// Eeprom 128字节最大分组数 128/15*2 =4
+#define EepromLastArea        (EepromMaxArea-1) //Eeprom最后一个分区
+#define OutOfTheArea        (EepromMaxArea+2) //超出写区域范围  
+
+
 
 
 extern void MyEepromInit();
@@ -133,4 +132,3 @@ extern volatile struct eepromUser xdata MyEeprom;
 
 
 #endif
-
